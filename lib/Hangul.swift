@@ -6,7 +6,7 @@
 //  Copyright © 2016 factorcat. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 
 enum HanChar {
@@ -62,21 +62,11 @@ func applicalbe(part: String, jamo: Jamo) -> String? {
         return jamo.sound
     } else {
         switch jamo.type {
-        case .초, .종:
+        case .초:
             switch (part, jamo.sound) {
             case ("ㄱ" ,"ㄱ"): return "ㄲ"
-            case ("ㄱ" ,"ㅅ"): return "ㄳ"
-            case ("ㄴ" ,"ㅈ"): return "ㄵ"
-            case ("ㄴ" ,"ㅎ"): return "ㄶ"
-            case ("ㄹ" ,"ㄱ"): return "ㄺ"
-            case ("ㄹ" ,"ㅁ"): return "ㄻ"
-            case ("ㄹ" ,"ㅂ"): return "ㄼ"
-            case ("ㄹ" ,"ㅅ"): return "ㄽ"
-            case ("ㄹ" ,"ㅌ"): return "ㄾ"
-            case ("ㄹ" ,"ㅍ"): return "ㄿ"
-            case ("ㄹ" ,"ㅎ"): return "ㅀ"
+            case ("ㄷ" ,"ㄷ"): return "ㄸ"
             case ("ㅂ" ,"ㅂ"): return "ㅃ"
-            case ("ㅂ" ,"ㅅ"): return "ㅄ"
             case ("ㅅ" ,"ㅅ"): return "ㅆ"
             case ("ㅈ" ,"ㅈ"): return "ㅉ"
             default: return nil
@@ -103,6 +93,26 @@ func applicalbe(part: String, jamo: Jamo) -> String? {
             case ("ㅣ", "ㅡ"): return "ㅢ" // rev
             default: return nil
             }
+        case .종:
+            switch (part, jamo.sound) {
+            case ("ㄱ" ,"ㄱ"): return "ㄲ"
+            case ("ㄱ" ,"ㅅ"): return "ㄳ"
+            case ("ㄴ" ,"ㅈ"): return "ㄵ"
+            case ("ㄴ" ,"ㅎ"): return "ㄶ"
+//            case ("ㄷ" ,"ㄷ"): return "ㄸ"
+            case ("ㄹ" ,"ㄱ"): return "ㄺ"
+            case ("ㄹ" ,"ㅁ"): return "ㄻ"
+            case ("ㄹ" ,"ㅂ"): return "ㄼ"
+            case ("ㄹ" ,"ㅅ"): return "ㄽ"
+            case ("ㄹ" ,"ㅌ"): return "ㄾ"
+            case ("ㄹ" ,"ㅍ"): return "ㄿ"
+            case ("ㄹ" ,"ㅎ"): return "ㅀ"
+//            case ("ㅂ" ,"ㅂ"): return "ㅃ"
+            case ("ㅂ" ,"ㅅ"): return "ㅄ"
+            case ("ㅅ" ,"ㅅ"): return "ㅆ"
+//            case ("ㅈ" ,"ㅈ"): return "ㅉ"
+            default: return nil
+            }
         default:
             return nil
         }
@@ -117,7 +127,7 @@ func compose(syllable: HanChar) -> String {
         switch (초, 중, 종) {
         case ("", "", ""):
             return ""
-        case (초, "", ""):
+        case (초, "", _):
             return 초
         case ("", 중, _):
             return 중

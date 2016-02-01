@@ -98,6 +98,37 @@ class HangulInputSystemTests: XCTestCase {
         XCTAssertEqual("감자", system.text)
     }
 
+    func testㅂㅇㅏ() {
+        var system = HangulInputSystem()
+        system.input(Jamo(type: .초, sound: "ㅂ"))
+        XCTAssertEqual("ㅂ", system.text)
+        system.input(Jamo(type: .종, sound: "ㅇ"))
+        XCTAssertEqual("ㅂ", system.text)
+        system.input(Jamo(type: .중, sound: "ㅏ"))
+        XCTAssertEqual("방", system.text)
+        
+        system = HangulInputSystem()
+        system.input(Jamo(type: .종, sound: "ㅇ"))
+        XCTAssertEqual("", system.text)
+        system.input(Jamo(type: .초, sound: "ㅂ"))
+        XCTAssertEqual("ㅂ", system.text)
+        system.input(Jamo(type: .중, sound: "ㅏ"))
+        XCTAssertEqual("방", system.text)
+    }
+    
+    func test녕ㅎ() {
+        let system = HangulInputSystem()
+        system.input(Jamo(type: .초, sound: "ㄴ"))
+        XCTAssertEqual("ㄴ", system.text)
+        system.input(Jamo(type: .중, sound: "ㅕ"))
+        XCTAssertEqual("녀", system.text)
+        system.input(Jamo(type: .종, sound: "ㅇ"))
+        XCTAssertEqual("녕", system.text)
+        system.input(Jamo(type: .초, sound: "ㅎ"))
+        XCTAssertEqual("녕ㅎ", system.text)
+    }
+
+    
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {
