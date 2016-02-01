@@ -351,6 +351,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = HangulSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.factor.HangulSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -362,6 +363,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = HangulSwift/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.factor.HangulSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -411,6 +413,7 @@
 				1CFE594D1C5F062B003DC5E2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		1CFE594E1C5F062B003DC5E2 /* Build configuration list for PBXNativeTarget "HangulSwiftTests" */ = {
 			isa = XCConfigurationList;
@@ -419,6 +422,7 @@
 				1CFE59501C5F062B003DC5E2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
