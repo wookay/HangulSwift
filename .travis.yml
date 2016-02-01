@@ -1,0 +1,7 @@
+language: objective-c
+osx_image: xcode7
+xcode_sdk: iphonesimulator
+script:
+  - make
+notifications:
+  email: false
