@@ -57,12 +57,18 @@ extension String {
     }
 }
 
-func applicalbe(part: String, jamo: Jamo) -> String? {
+func applicalbe(part: String, jamo: Jamo, prevjamo: Jamo?) -> String? {
     if part.isEmpty {
         return jamo.sound
     } else {
         switch jamo.type {
         case .초:
+            if let preja: Jamo = prevjamo {
+                if case .초 = preja.type {
+                } else {
+                    return nil
+                }
+            }
             switch (part, jamo.sound) {
             case ("ㄱ" ,"ㄱ"): return "ㄲ"
             case ("ㄷ" ,"ㄷ"): return "ㄸ"
@@ -72,6 +78,12 @@ func applicalbe(part: String, jamo: Jamo) -> String? {
             default: return nil
             }
         case .중:
+            if let preja: Jamo = prevjamo {
+                if case .중 = preja.type {
+                } else {
+                    return nil
+                }
+            }
             switch (part, jamo.sound) {
 //            case ("ㅏ", "ㅣ"): return "ㅐ"
 //            case ("ㅑ", "ㅣ"): return "ㅒ"
@@ -94,6 +106,12 @@ func applicalbe(part: String, jamo: Jamo) -> String? {
             default: return nil
             }
         case .종:
+            if let preja: Jamo = prevjamo {
+                if case .종 = preja.type {
+                } else {
+                    return nil
+                }
+            }
             switch (part, jamo.sound) {
             case ("ㄱ" ,"ㄱ"): return "ㄲ"
             case ("ㄱ" ,"ㅅ"): return "ㄳ"
@@ -198,21 +216,21 @@ class HangulInputSystem {
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: "", 중: "", 종: jamo.sound)
             case let (.hangul(초, 중, 종), .초):
-                if let applied = applicalbe(초, jamo: jamo) {
+                if let applied = applicalbe(초, jamo: jamo, prevjamo: prevjamo) {
                     prevchar = HanChar.hangul(초: applied, 중: 중, 종: 종)
                 } else {
                     syllables.append(prev)
                     prevchar = HanChar.hangul(초: jamo.sound, 중: "", 종: "")
                 }
             case let (.hangul(초, 중, 종), .중):
-                if let applied = applicalbe(중, jamo: jamo) {
+                if let applied = applicalbe(중, jamo: jamo, prevjamo: prevjamo) {
                     prevchar = HanChar.hangul(초: 초, 중: applied, 종: 종)
                 } else {
                     syllables.append(prev)
                     prevchar = HanChar.hangul(초: "", 중: jamo.sound, 종: "")
                 }
             case let (.hangul(초, 중, 종), .종):
-                if let applied = applicalbe(종, jamo: jamo) {
+                if let applied = applicalbe(종, jamo: jamo, prevjamo: prevjamo) {
                     prevchar = HanChar.hangul(초: 초, 중: 중, 종: applied)
                 } else {
                     syllables.append(prev)
