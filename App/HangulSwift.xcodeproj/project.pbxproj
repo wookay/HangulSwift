@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1CD588281C5F37F900CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
+		1CD5882F1C5F49EF00CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
+		1CD588311C5F4A0E00CB941E /* HangulInputSystemNormal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */; };
 		1CFE59321C5F062B003DC5E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59311C5F062B003DC5E2 /* AppDelegate.swift */; };
 		1CFE59341C5F062B003DC5E2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59331C5F062B003DC5E2 /* ViewController.swift */; };
 		1CFE59371C5F062B003DC5E2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1CFE59351C5F062B003DC5E2 /* Main.storyboard */; };
@@ -15,8 +18,6 @@
 		1CFE59471C5F062B003DC5E2 /* HangulSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59461C5F062B003DC5E2 /* HangulSwiftTests.swift */; };
 		1CFE59521C5F06FA003DC5E2 /* HanCharTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59511C5F06FA003DC5E2 /* HanCharTests.swift */; };
 		1CFE59541C5F0711003DC5E2 /* HangulInputSystemTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59531C5F0711003DC5E2 /* HangulInputSystemTests.swift */; };
-		1CFE59571C5F0761003DC5E2 /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59561C5F0761003DC5E2 /* Hangul.swift */; };
-		1CFE59591C5F076A003DC5E2 /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59561C5F0761003DC5E2 /* Hangul.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,6 +31,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1CD588271C5F37F900CB941E /* Hangul.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hangul.swift; sourceTree = "<group>"; };
+		1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HangulInputSystemNormal.swift; sourceTree = "<group>"; };
 		1CFE592E1C5F062B003DC5E2 /* HangulSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HangulSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CFE59311C5F062B003DC5E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CFE59331C5F062B003DC5E2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -42,7 +45,6 @@
 		1CFE59481C5F062B003DC5E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1CFE59511C5F06FA003DC5E2 /* HanCharTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HanCharTests.swift; sourceTree = "<group>"; };
 		1CFE59531C5F0711003DC5E2 /* HangulInputSystemTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HangulInputSystemTests.swift; sourceTree = "<group>"; };
-		1CFE59561C5F0761003DC5E2 /* Hangul.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hangul.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,10 +65,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1CD588261C5F37F900CB941E /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				1CD588271C5F37F900CB941E /* Hangul.swift */,
+			);
+			name = lib;
+			path = ../lib;
+			sourceTree = "<group>";
+		};
 		1CFE59251C5F062B003DC5E2 = {
 			isa = PBXGroup;
 			children = (
-				1CFE59551C5F0761003DC5E2 /* lib */,
+				1CD588261C5F37F900CB941E /* lib */,
 				1CFE59301C5F062B003DC5E2 /* HangulSwift */,
 				1CFE59451C5F062B003DC5E2 /* HangulSwiftTests */,
 				1CFE592F1C5F062B003DC5E2 /* Products */,
@@ -99,20 +110,12 @@
 			isa = PBXGroup;
 			children = (
 				1CFE59511C5F06FA003DC5E2 /* HanCharTests.swift */,
+				1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */,
 				1CFE59531C5F0711003DC5E2 /* HangulInputSystemTests.swift */,
 				1CFE59461C5F062B003DC5E2 /* HangulSwiftTests.swift */,
 				1CFE59481C5F062B003DC5E2 /* Info.plist */,
 			);
 			path = HangulSwiftTests;
-			sourceTree = "<group>";
-		};
-		1CFE59551C5F0761003DC5E2 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				1CFE59561C5F0761003DC5E2 /* Hangul.swift */,
-			);
-			name = lib;
-			path = ../lib;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -216,7 +219,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1CFE59571C5F0761003DC5E2 /* Hangul.swift in Sources */,
+				1CD588281C5F37F900CB941E /* Hangul.swift in Sources */,
 				1CFE59341C5F062B003DC5E2 /* ViewController.swift in Sources */,
 				1CFE59321C5F062B003DC5E2 /* AppDelegate.swift in Sources */,
 			);
@@ -228,7 +231,8 @@
 			files = (
 				1CFE59541C5F0711003DC5E2 /* HangulInputSystemTests.swift in Sources */,
 				1CFE59471C5F062B003DC5E2 /* HangulSwiftTests.swift in Sources */,
-				1CFE59591C5F076A003DC5E2 /* Hangul.swift in Sources */,
+				1CD5882F1C5F49EF00CB941E /* Hangul.swift in Sources */,
+				1CD588311C5F4A0E00CB941E /* HangulInputSystemNormal.swift in Sources */,
 				1CFE59521C5F06FA003DC5E2 /* HanCharTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

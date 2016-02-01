@@ -15,7 +15,8 @@ enum HanChar {
 }
 
 enum JamoType {
-    case A
+    case Normal
+    case Special(key: Int32)
     case 초
     case 중
     case 종
@@ -57,12 +58,13 @@ extension String {
 }
 
 func applicalbe(part: String, jamo: Jamo) -> String? {
-    if "" == part {
+    if part.isEmpty {
         return jamo.sound
     } else {
         switch jamo.type {
         case .초, .종:
             switch (part, jamo.sound) {
+            case ("ㄱ" ,"ㄱ"): return "ㄲ"
             case ("ㄱ" ,"ㅅ"): return "ㄳ"
             case ("ㄴ" ,"ㅈ"): return "ㄵ"
             case ("ㄴ" ,"ㅎ"): return "ㄶ"
@@ -73,11 +75,18 @@ func applicalbe(part: String, jamo: Jamo) -> String? {
             case ("ㄹ" ,"ㅌ"): return "ㄾ"
             case ("ㄹ" ,"ㅍ"): return "ㄿ"
             case ("ㄹ" ,"ㅎ"): return "ㅀ"
+            case ("ㅂ" ,"ㅂ"): return "ㅃ"
             case ("ㅂ" ,"ㅅ"): return "ㅄ"
+            case ("ㅅ" ,"ㅅ"): return "ㅆ"
+            case ("ㅈ" ,"ㅈ"): return "ㅉ"
             default: return nil
             }
         case .중:
             switch (part, jamo.sound) {
+//            case ("ㅏ", "ㅣ"): return "ㅐ"
+//            case ("ㅑ", "ㅣ"): return "ㅒ"
+//            case ("ㅓ", "ㅣ"): return "ㅔ"
+//            case ("ㅕ", "ㅣ"): return "ㅖ"
             case ("ㅗ", "ㅏ"): return "ㅘ"
             case ("ㅗ", "ㅐ"): return "ㅙ"
             case ("ㅗ", "ㅣ"): return "ㅚ"
@@ -85,6 +94,13 @@ func applicalbe(part: String, jamo: Jamo) -> String? {
             case ("ㅜ", "ㅔ"): return "ㅞ"
             case ("ㅜ", "ㅣ"): return "ㅟ"
             case ("ㅡ", "ㅣ"): return "ㅢ"
+            case ("ㅏ", "ㅗ"): return "ㅘ" // rev
+            case ("ㅐ", "ㅗ"): return "ㅙ" // rev
+            case ("ㅣ", "ㅗ"): return "ㅚ" // rev
+            case ("ㅓ", "ㅜ"): return "ㅝ" // rev
+            case ("ㅔ", "ㅜ"): return "ㅞ" // rev
+            case ("ㅣ", "ㅜ"): return "ㅟ" // rev
+            case ("ㅣ", "ㅡ"): return "ㅢ" // rev
             default: return nil
             }
         default:
@@ -93,12 +109,11 @@ func applicalbe(part: String, jamo: Jamo) -> String? {
     }
 }
 
-func compose(syl: HanChar) -> String {
-    switch syl {
+func compose(syllable: HanChar) -> String {
+    switch syllable {
     case let .normal(value) :
         return value
     case let .hangul(초, 중, 종):
-        var 값  = 유니코드_가
         switch (초, 중, 종) {
         case ("", "", ""):
             return ""
@@ -109,6 +124,7 @@ func compose(syl: HanChar) -> String {
         case ("", "", 종):
             return ""
         default:
+            var 값  = 유니코드_가
             if let 초값 = 초성표.indexOf(초) {
                 값 += 초성오프셋 * 초값
             }
@@ -126,28 +142,49 @@ func compose(syl: HanChar) -> String {
 class HangulInputSystem {
     var syllables =  [HanChar]()
     var text: String {
-        let str = syllables.map { syl in compose(syl) }.joinWithSeparator("")
-        if let prev = prevchar {
-            return str + compose(prev)
-        } else {
-            return str
+        var str = syllables.map { syllable in compose(syllable) }.joinWithSeparator("")
+        if let prev = prevhangul {
+            str += compose(prev)
         }
+        if let prev = prevchar {
+            str += compose(prev)
+        }
+        return str
     }
+    var prevhangul: HanChar? = nil // save
     var prevchar: HanChar? = nil
+    var prevjamo: Jamo? = nil
     
     func automata(jamo: Jamo) {
         if let prev = prevchar {
             switch (prev, jamo.type) {
-            case (_, .A):
-                syllables.append(prev)
+            case (.hangul, .Normal):
+                prevhangul = prev
+                prevchar = HanChar.normal(value: jamo.sound)
+            case (.normal, .Normal):
+                if nil != prevhangul {
+                    prevhangul = nil
+                }
                 prevchar = HanChar.normal(value: jamo.sound)
             case (.normal, .초):
+                if let hangul = prevhangul {
+                    syllables.append(hangul)
+                    prevhangul = nil
+                }
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: jamo.sound, 중: "", 종: "")
             case (.normal, .중):
+                if let hangul = prevhangul {
+                    syllables.append(hangul)
+                    prevhangul = nil
+                }
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: "", 중: jamo.sound, 종: "")
             case (.normal, .종):
+                if let hangul = prevhangul {
+                    syllables.append(hangul)
+                    prevhangul = nil
+                }
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: "", 중: "", 종: jamo.sound)
             case let (.hangul(초, 중, 종), .초):
@@ -171,10 +208,17 @@ class HangulInputSystem {
                     syllables.append(prev)
                     prevchar = HanChar.hangul(초: "", 중: "", 종: jamo.sound)
                 }
+            case (_, .Special(BACKSPACE)):
+                remove_prev_input(prev)
+            default:
+                print("?")
+                break
             }
         } else {
             switch jamo.type {
-            case .A:
+            case .Special:
+                break
+            case .Normal:
                 prevchar = HanChar.normal(value: jamo.sound)
             case .초:
                 prevchar = HanChar.hangul(초: jamo.sound, 중: "", 종: "")
@@ -184,14 +228,50 @@ class HangulInputSystem {
                 prevchar = HanChar.hangul(초: "", 중: "", 종: jamo.sound)
             }
         }
+        prevjamo = jamo
+    }
+    
+    internal func remove_prev_input(prev: HanChar) {
+        if case let .hangul(초, 중, 종) = prev {
+            if let jamo = prevjamo {
+                switch jamo.type {
+                case .Special(_), .Normal:
+                    if let hangul = prevhangul {
+                        prevchar = hangul
+                        prevhangul = nil
+                    } else {
+                        if syllables.count > 0 {
+                            syllables.removeLast()
+                        }
+                        prevchar = nil
+                    }
+                case .초:
+                    prevchar = HanChar.hangul(초: "", 중: 중, 종: 종)
+                case .중:
+                    prevchar = HanChar.hangul(초: 초, 중: "", 종: 종)
+                case .종:
+                    prevchar = HanChar.hangul(초: 초, 중: 중, 종: "")
+                }
+            }
+        } else {
+            if let hangul = prevhangul {
+                prevchar = hangul
+                prevhangul = nil
+            } else {
+                prevchar = nil
+            }
+        }
+    }
+
+    func input(key: Int32) {
+        automata(Jamo(type: .Special(key: key), sound: ""))
+    }
+    
+    func input(normal: String) {
+        automata(Jamo(type: .Normal, sound: normal))
     }
     
     func input(jamo: Jamo) {
-        switch jamo.type {
-        case .A:
-            syllables.append(HanChar.normal(value: jamo.sound))
-        case _:
-            automata(jamo)
-        }
+        automata(jamo)
     }
 }
