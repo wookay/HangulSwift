@@ -203,6 +203,16 @@ class HangulInputSystemTests: XCTestCase {
         system.input(Jamo(type: .중, sound: "ㅏ"))
         XCTAssertEqual("다다", system.text)
     }
+    
+    func test많() {
+        let system = HangulInputSystem()
+        system.input(Jamo(type: .초, sound: "ㅁ"))
+        XCTAssertEqual("ㅁ", system.text)
+        system.input(Jamo(type: .중, sound: "ㅏ"))
+        XCTAssertEqual("마", system.text)
+        system.input(Jamo(type: .종, sound: "ㄶ"))
+        XCTAssertEqual("많", system.text)
+    }
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
