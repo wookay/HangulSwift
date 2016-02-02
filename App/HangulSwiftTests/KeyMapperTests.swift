@@ -25,6 +25,26 @@ class KeyMapperTests: XCTestCase {
         let path = [NSBundle.mainBundle().resourcePath!, "390-Sebulshik.txt"].joinWithSeparator("/")
         let rows = jamo_mapper_rows(path)
         XCTAssertEqual(4, rows.count)
+        var tested = 0
+        if case let .종(sym, sound) = rows[0][2] {
+            XCTAssertEqual("!", sym)
+            XCTAssertEqual("ㅈ", sound)
+            tested += 1
+        }
+        XCTAssertEqual(1, tested)
+    }
+    
+    func test391() {
+        let path = [NSBundle.mainBundle().resourcePath!, "391-Sebulshik.txt"].joinWithSeparator("/")
+        let rows = jamo_mapper_rows(path)
+        XCTAssertEqual(4, rows.count)
+        var tested = 0
+        if case let .종(sym, sound) = rows[0][2] {
+            XCTAssertEqual("!", sym)
+            XCTAssertEqual("ㄲ", sound)
+            tested += 1
+        }
+        XCTAssertEqual(1, tested)
     }
     
     func testPerformanceExample() {
@@ -33,5 +53,4 @@ class KeyMapperTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-    
 }

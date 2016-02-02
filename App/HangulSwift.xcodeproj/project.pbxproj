@@ -11,6 +11,7 @@
 		1C58F2471C6099CF00CF033A /* 390-Sebulshik.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1C58F2461C6099CF00CF033A /* 390-Sebulshik.txt */; };
 		1C58F2491C6099ED00CF033A /* KeyMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2481C6099ED00CF033A /* KeyMapperTests.swift */; };
 		1C58F26E1C60B67600CF033A /* KeyMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2431C60999B00CF033A /* KeyMapper.swift */; };
+		1C58F2721C60F8F700CF033A /* 391-Sebulshik.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1C58F2711C60F8F700CF033A /* 391-Sebulshik.txt */; };
 		1CD588281C5F37F900CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
 		1CD5882F1C5F49EF00CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
 		1CD588311C5F4A0E00CB941E /* HangulInputSystemNormal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */; };
@@ -38,6 +39,7 @@
 		1C58F2431C60999B00CF033A /* KeyMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyMapper.swift; sourceTree = "<group>"; };
 		1C58F2461C6099CF00CF033A /* 390-Sebulshik.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "390-Sebulshik.txt"; sourceTree = "<group>"; };
 		1C58F2481C6099ED00CF033A /* KeyMapperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyMapperTests.swift; sourceTree = "<group>"; };
+		1C58F2711C60F8F700CF033A /* 391-Sebulshik.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "391-Sebulshik.txt"; sourceTree = "<group>"; };
 		1CD588271C5F37F900CB941E /* Hangul.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hangul.swift; sourceTree = "<group>"; };
 		1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HangulInputSystemNormal.swift; sourceTree = "<group>"; };
 		1CFE592E1C5F062B003DC5E2 /* HangulSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HangulSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				1C58F2461C6099CF00CF033A /* 390-Sebulshik.txt */,
+				1C58F2711C60F8F700CF033A /* 391-Sebulshik.txt */,
 			);
 			name = keymaps;
 			path = ../keymaps;
@@ -220,6 +223,7 @@
 			files = (
 				1CFE593C1C5F062B003DC5E2 /* LaunchScreen.storyboard in Resources */,
 				1CFE59391C5F062B003DC5E2 /* Assets.xcassets in Resources */,
+				1C58F2721C60F8F700CF033A /* 391-Sebulshik.txt in Resources */,
 				1C58F2471C6099CF00CF033A /* 390-Sebulshik.txt in Resources */,
 				1CFE59371C5F062B003DC5E2 /* Main.storyboard in Resources */,
 			);
