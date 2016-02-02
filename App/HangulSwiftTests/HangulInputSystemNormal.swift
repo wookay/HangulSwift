@@ -29,9 +29,9 @@ class HangulInputSystemNormal: XCTestCase {
         system.input(BACKSPACE)
         XCTAssertEqual("ㄱ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("가", system.text)
+        XCTAssertEqual("ㄱㅏ", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("감", system.text)
+        XCTAssertEqual("ㄱㅏ", system.text)
     }
     
     func test감자() {

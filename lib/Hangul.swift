@@ -170,16 +170,14 @@ func compose(syllable: HanChar) -> String {
 class HangulInputSystem {
     var syllables =  [HanChar]()
     var text: String {
-        var str = syllables.map { syllable in compose(syllable) }.joinWithSeparator("")
-        if let prev = prevhangul {
-            str += compose(prev)
-        }
+        let str = syllables.map { syllable in compose(syllable) }.joinWithSeparator("")
         if let prev = prevchar {
-            str += compose(prev)
+            return str + compose(prev)
+        } else {
+            return str
         }
-        return str
     }
-    var prevhangul: HanChar? = nil // save
+
     var prevchar: HanChar? = nil
     var prevjamo: Jamo? = nil
     
@@ -187,32 +185,20 @@ class HangulInputSystem {
         if let prev = prevchar {
             switch (prev, jamo.type) {
             case (.hangul, .Normal):
-                prevhangul = prev
+                if !compose(prev).isEmpty {
+                    syllables.append(prev)
+                }
                 prevchar = HanChar.normal(value: jamo.sound)
             case (.normal, .Normal):
-                if nil != prevhangul {
-                    prevhangul = nil
-                }
+                syllables.append(prev)
                 prevchar = HanChar.normal(value: jamo.sound)
             case (.normal, .초):
-                if let hangul = prevhangul {
-                    syllables.append(hangul)
-                    prevhangul = nil
-                }
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: jamo.sound, 중: "", 종: "")
             case (.normal, .중):
-                if let hangul = prevhangul {
-                    syllables.append(hangul)
-                    prevhangul = nil
-                }
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: "", 중: jamo.sound, 종: "")
             case (.normal, .종):
-                if let hangul = prevhangul {
-                    syllables.append(hangul)
-                    prevhangul = nil
-                }
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: "", 중: "", 종: jamo.sound)
             case let (.hangul(초, 중, 종), .초):
@@ -244,6 +230,10 @@ class HangulInputSystem {
             }
         } else {
             switch jamo.type {
+            case .Special(BACKSPACE):
+                if syllables.count > 0 {
+                    syllables.removeLast()
+                }
             case .Special:
                 break
             case .Normal:
@@ -264,14 +254,10 @@ class HangulInputSystem {
             if let jamo = prevjamo {
                 switch jamo.type {
                 case .Special(_), .Normal:
-                    if let hangul = prevhangul {
-                        prevchar = hangul
-                        prevhangul = nil
-                    } else {
+                    if compose(prev).isEmpty {
                         if syllables.count > 0 {
                             syllables.removeLast()
                         }
-                        prevchar = nil
                     }
                 case .초:
                     prevchar = HanChar.hangul(초: "", 중: 중, 종: 종)
@@ -280,14 +266,11 @@ class HangulInputSystem {
                 case .종:
                     prevchar = HanChar.hangul(초: 초, 중: 중, 종: "")
                 }
-            }
-        } else {
-            if let hangul = prevhangul {
-                prevchar = hangul
-                prevhangul = nil
             } else {
                 prevchar = nil
             }
+        } else {
+            prevchar = nil
         }
     }
 
