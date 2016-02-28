@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C2A030D1C82E1FC00A572CF /* 3-2015.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1C2A030C1C82E1FB00A572CF /* 3-2015.txt */; };
+		1C4EE9881C8365D600A81FDB /* HangulGalmadlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C2A030E1C82E4E400A572CF /* HangulGalmadlyTests.swift */; };
 		1C58F2441C60999B00CF033A /* KeyMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2431C60999B00CF033A /* KeyMapper.swift */; };
 		1C58F2471C6099CF00CF033A /* 390-Sebulshik.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1C58F2461C6099CF00CF033A /* 390-Sebulshik.txt */; };
 		1C58F2491C6099ED00CF033A /* KeyMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2481C6099ED00CF033A /* KeyMapperTests.swift */; };
@@ -15,6 +17,7 @@
 		1CD588281C5F37F900CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
 		1CD5882F1C5F49EF00CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
 		1CD588311C5F4A0E00CB941E /* HangulInputSystemNormal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */; };
+		1CF4FE061C83A31E00F3626A /* XCTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CF4FE051C83A31E00F3626A /* XCTest.swift */; };
 		1CFE59321C5F062B003DC5E2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59311C5F062B003DC5E2 /* AppDelegate.swift */; };
 		1CFE59341C5F062B003DC5E2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59331C5F062B003DC5E2 /* ViewController.swift */; };
 		1CFE59371C5F062B003DC5E2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1CFE59351C5F062B003DC5E2 /* Main.storyboard */; };
@@ -36,12 +39,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C2A030C1C82E1FB00A572CF /* 3-2015.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "3-2015.txt"; sourceTree = "<group>"; };
+		1C2A030E1C82E4E400A572CF /* HangulGalmadlyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HangulGalmadlyTests.swift; sourceTree = "<group>"; };
 		1C58F2431C60999B00CF033A /* KeyMapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyMapper.swift; sourceTree = "<group>"; };
 		1C58F2461C6099CF00CF033A /* 390-Sebulshik.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "390-Sebulshik.txt"; sourceTree = "<group>"; };
 		1C58F2481C6099ED00CF033A /* KeyMapperTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyMapperTests.swift; sourceTree = "<group>"; };
 		1C58F2711C60F8F700CF033A /* 391-Sebulshik.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "391-Sebulshik.txt"; sourceTree = "<group>"; };
 		1CD588271C5F37F900CB941E /* Hangul.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Hangul.swift; sourceTree = "<group>"; };
 		1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HangulInputSystemNormal.swift; sourceTree = "<group>"; };
+		1CF4FE051C83A31E00F3626A /* XCTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCTest.swift; sourceTree = "<group>"; };
+		1CF4FE071C83A74400F3626A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		1CF4FE091C83A99B00F3626A /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = LICENSE.md; path = ../LICENSE.md; sourceTree = "<group>"; };
 		1CFE592E1C5F062B003DC5E2 /* HangulSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HangulSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CFE59311C5F062B003DC5E2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1CFE59331C5F062B003DC5E2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -77,6 +85,7 @@
 		1C58F2451C6099B200CF033A /* keymaps */ = {
 			isa = PBXGroup;
 			children = (
+				1C2A030C1C82E1FB00A572CF /* 3-2015.txt */,
 				1C58F2461C6099CF00CF033A /* 390-Sebulshik.txt */,
 				1C58F2711C60F8F700CF033A /* 391-Sebulshik.txt */,
 			);
@@ -94,11 +103,22 @@
 			path = ../lib;
 			sourceTree = "<group>";
 		};
+		1CF4FE041C83A31E00F3626A /* xctest */ = {
+			isa = PBXGroup;
+			children = (
+				1CF4FE051C83A31E00F3626A /* XCTest.swift */,
+			);
+			name = xctest;
+			path = ../xctest;
+			sourceTree = "<group>";
+		};
 		1CFE59251C5F062B003DC5E2 = {
 			isa = PBXGroup;
 			children = (
-				1C58F2451C6099B200CF033A /* keymaps */,
+				1CF4FE071C83A74400F3626A /* README.md */,
+				1CF4FE091C83A99B00F3626A /* LICENSE.md */,
 				1CD588261C5F37F900CB941E /* lib */,
+				1C58F2451C6099B200CF033A /* keymaps */,
 				1CFE59301C5F062B003DC5E2 /* HangulSwift */,
 				1CFE59451C5F062B003DC5E2 /* HangulSwiftTests */,
 				1CFE592F1C5F062B003DC5E2 /* Products */,
@@ -130,8 +150,10 @@
 		1CFE59451C5F062B003DC5E2 /* HangulSwiftTests */ = {
 			isa = PBXGroup;
 			children = (
+				1CF4FE041C83A31E00F3626A /* xctest */,
 				1C58F2481C6099ED00CF033A /* KeyMapperTests.swift */,
 				1CFE59511C5F06FA003DC5E2 /* HanCharTests.swift */,
+				1C2A030E1C82E4E400A572CF /* HangulGalmadlyTests.swift */,
 				1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */,
 				1CFE59531C5F0711003DC5E2 /* HangulInputSystemTests.swift */,
 				1CFE59461C5F062B003DC5E2 /* HangulSwiftTests.swift */,
@@ -221,6 +243,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C2A030D1C82E1FC00A572CF /* 3-2015.txt in Resources */,
 				1CFE593C1C5F062B003DC5E2 /* LaunchScreen.storyboard in Resources */,
 				1CFE59391C5F062B003DC5E2 /* Assets.xcassets in Resources */,
 				1C58F2721C60F8F700CF033A /* 391-Sebulshik.txt in Resources */,
@@ -260,6 +283,8 @@
 				1C58F26E1C60B67600CF033A /* KeyMapper.swift in Sources */,
 				1CD5882F1C5F49EF00CB941E /* Hangul.swift in Sources */,
 				1CD588311C5F4A0E00CB941E /* HangulInputSystemNormal.swift in Sources */,
+				1CF4FE061C83A31E00F3626A /* XCTest.swift in Sources */,
+				1C4EE9881C8365D600A81FDB /* HangulGalmadlyTests.swift in Sources */,
 				1CFE59521C5F06FA003DC5E2 /* HanCharTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

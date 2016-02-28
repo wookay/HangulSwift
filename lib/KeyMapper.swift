@@ -20,6 +20,8 @@ enum JamoLine {
     case 초(String, String)
     case 중(String, String)
     case 종(String, String)
+    case 갈(String, String, String) // 갈마들이
+    case 모(String, String) // 이중모음용
 }
 
 
@@ -65,8 +67,15 @@ class KeyMapper {
                          row.append(.중(sym, sound))
                     case "종":
                          row.append(.종(sym, sound))
+                    case "모":
+                        row.append(.모(sym, sound))
                     default:
                         row.append(.Normal(sym, sound))
+                    }
+                case 6: // 갈마들이
+                    let (sym, type, _, jung, _, jong) = (item[0], item[1], item[2], item[3], item[4], item[5])
+                    if "갈" == type {
+                        row.append(.갈(sym, jung, jong))
                     }
                 default:
                     break

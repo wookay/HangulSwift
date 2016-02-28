@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "FDAA6DBEC91D36F3F99A521841B973E4843FFFB9",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "0AF20B3DBEACE49B29FB2DB116EE9500706FFCFC" : 0,
+    "FDAA6DBEC91D36F3F99A521841B973E4843FFFB9" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "DFA77EFE-D3C4-4848-98B2-ED402C48E9AA",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "0AF20B3DBEACE49B29FB2DB116EE9500706FFCFC" : "gangbuk\/",
+    "FDAA6DBEC91D36F3F99A521841B973E4843FFFB9" : "HangulSwift\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "HangulSwift",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "App\/HangulSwift.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:factorcat\/gangbuk.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "0AF20B3DBEACE49B29FB2DB116EE9500706FFCFC"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:wookay\/HangulSwift.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "FDAA6DBEC91D36F3F99A521841B973E4843FFFB9"
+    }
+  ]
+}

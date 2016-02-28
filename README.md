@@ -1,8 +1,11 @@
 HangulSwift
 ===========
 
-  [![Build Status](https://api.travis-ci.org/wookay/HangulSwift.svg?branch=master)](https://travis-ci.org/wookay/HangulSwift)
+  * Hangul Automata for Sebul Keyboard
+    https://itunes.apple.com/en/app/id428835384?mt=8
 
+
+  [![Build Status](https://api.travis-ci.org/wookay/HangulSwift.svg?branch=master)](https://travis-ci.org/wookay/HangulSwift)
 
 
 ```sh

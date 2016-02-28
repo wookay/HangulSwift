@@ -47,6 +47,20 @@ class KeyMapperTests: XCTestCase {
         XCTAssertEqual(1, tested)
     }
     
+    func test3_2015() {
+        let path = [NSBundle.mainBundle().resourcePath!, "3-2015.txt"].joinWithSeparator("/")
+        let rows = jamo_mapper_rows(path)
+        XCTAssertEqual(4, rows.count)
+        var tested = 0
+        if case let .갈(sym, jung, jong) = rows[1][5] {
+            XCTAssertEqual("e", sym)
+            XCTAssertEqual("ㅕ", jung)
+            XCTAssertEqual("ㅈ", jong)
+            tested += 1
+        }
+        XCTAssertEqual(1, tested)
+    }
+
     func testPerformanceExample() {
         // This is an example of a performance test case.
         self.measureBlock {
