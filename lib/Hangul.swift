@@ -269,6 +269,8 @@ class HangulInputSystem {
                 syllables.append(prev)
                 prevchar = HanChar.hangul(초: "", 중: jung.sound, 종: "")
                 prevjamo = jung
+                diff.n += 1
+                diff.change += compose(prevchar!)
             case let (.hangul(초, _, _), .초):
                 diff.n += apply_compose(초, jamo, prev).n
             case let (.hangul(_, 중, _), .중):

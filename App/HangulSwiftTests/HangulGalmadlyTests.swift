@@ -101,7 +101,14 @@ class HangulGalmadlyTests: XCTestCase {
         system.input(BACKSPACE)
         Assert.equal("", system.text)
     }
-    
+
+    func testㅜ() {
+        let system = HangulInputSystem()
+        system.input(" ")
+        Assert.equal(" ", system.text)
+        system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅎ")), sound: ""))
+        Assert.equal(" ㅣ", system.text)
+    }
 
     override func setUp() {
         super.setUp()
