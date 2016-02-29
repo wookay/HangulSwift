@@ -6,16 +6,24 @@
 //  Copyright © 2016 factorcat. All rights reserved.
 //
 
-import XCTest
+//import XCTest
 
-class HangulGalmadlyTests: XCTestCase {
-    
+class HangulGalmadlyTests: WTestCase {
+
+    func 초성(sound: String) -> Jamo {
+        return Jamo(type: .초, sound: sound)
+    }
+
     func 중성(sound: String) -> Jamo {
         return Jamo(type: .중, sound: sound)
     }
     
     func 종성(sound: String) -> Jamo {
         return Jamo(type: .종, sound: sound)
+    }
+    
+    func 모음(sound: String) -> Jamo {
+        return Jamo(type: .모, sound: sound)
     }
     
     func test더() {
@@ -102,12 +110,78 @@ class HangulGalmadlyTests: XCTestCase {
         Assert.equal("", system.text)
     }
 
-    func testㅜ() {
+    func test_ㅣ() {
         let system = HangulInputSystem()
         system.input(" ")
         Assert.equal(" ", system.text)
         system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅎ")), sound: ""))
         Assert.equal(" ㅣ", system.text)
+    }
+
+    func test코() {
+        let system = HangulInputSystem()
+        system.input(Jamo(type: .갈(중성("ㅗ"), 초성("ㅋ")), sound: ""))
+        Assert.equal("ㅋ", system.text)
+        system.input(Jamo(type: .갈(중성("ㅗ"), 초성("ㅋ")), sound: ""))
+        Assert.equal("코", system.text)
+        system.input(BACKSPACE)
+        Assert.equal("ㅋ", system.text)
+    }
+
+    func test취_ㅊㅜㅣ() {
+        let system = HangulInputSystem()
+        system.input(Jamo(type: .갈(모음("ㅜ"), 초성("ㅊ")), sound: ""))
+        Assert.equal("ㅊ", system.text)
+        system.input(Jamo(type: .갈(모음("ㅜ"), 초성("ㅊ")), sound: ""))
+        Assert.equal("추", system.text)
+        system.input(중성("ㅣ"))
+        Assert.equal("취", system.text)
+    }
+
+    func test취_ㅊㅣㅜ() {
+        let system = HangulInputSystem()
+        system.input(Jamo(type: .갈(모음("ㅜ"), 초성("ㅊ")), sound: ""))
+        Assert.equal("ㅊ", system.text)
+        system.input(중성("ㅣ"))
+        Assert.equal("치", system.text)
+        system.input(Jamo(type: .갈(모음("ㅜ"), 초성("ㅊ")), sound: ""))
+        Assert.equal("취", system.text)
+    }
+    
+    func test의_ㅇㅡㅣ() {
+        let system = HangulInputSystem()
+        system.input(초성("ㅇ"))
+        Assert.equal("ㅇ", system.text)
+        system.input(Jamo(type: .갈(모음("ㅡ"), 초성("ㅁ")), sound: ""))
+        Assert.equal("으", system.text)
+        system.input(중성("ㅣ"))
+        Assert.equal("의", system.text)
+    }
+
+    func test_unicodeScalars() {
+        // 한글 호환 자모 영역
+        Assert.equal(["\u{3139}"], "ㄹ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{3139}", "\u{119E}"], "ㄹᆞ".unicodeScalars.map { x in x })
+        
+        // 한글 자모 영역
+        Assert.equal(["\u{1105}"], "ᄅ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{1105}", "\u{119E}"], "ᄅᆞ".unicodeScalars.map { x in x })
+
+        Assert.equal(["\u{1105}", "\u{119E}", "\u{11B7}"], "ᄅᆞᆷ".unicodeScalars.map { x in x })
+        
+        // 받침
+        Assert.equal(["\u{11AF}"], "ᆯ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{11B7}"], "ᆷ".unicodeScalars.map { x in x })
+    }
+
+    func testᄅᆞ_ㄹㆍ() {
+        let system = HangulInputSystem()
+        system.input(초성("ㄹ"))
+        Assert.equal("ㄹ", system.text)
+        system.input(Jamo(type: .갈(모음("ㆍ"), 초성("ㅍ")), sound: ""))
+        Assert.equal("\u{1105}" + "\u{119E}", system.text)
+        system.input(종성("ㅁ"))
+        Assert.equal("\u{1105}" + "\u{119E}" + "\u{11B7}", system.text)
     }
 
     override func setUp() {
