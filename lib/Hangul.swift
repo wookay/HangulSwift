@@ -149,12 +149,21 @@ class HangulInputSystem {
     var pressed: ((Jamo)->Void)? = nil
     var doensori: ((String, String, String) -> String?)? = nil
     
+    func doensori_routine(type: String, _ lhs: String, _ rhs: String) -> String? {
+        if let doensori_func = doensori {
+            if let doen = doensori_func(type, lhs, rhs) {
+                return doen
+            }
+        }
+        return nil
+    }
+    
     func applicalbe(part: String, jamo: Jamo, prevjamo: Jamo?) -> String? {
         if part.isEmpty {
             return jamo.sound
         } else {
             switch jamo.type {
-            case .갈(_,_):
+            case .갈(_, _):
                 return nil
                 
             case .초:
@@ -171,13 +180,7 @@ class HangulInputSystem {
                 case ("ㅅ" ,"ㅅ"): return "ㅆ"
                 case ("ㅈ" ,"ㅈ"): return "ㅉ"
                 default:
-                    if let doensori_func = doensori {
-                        if let doen = doensori_func("초", part, jamo.sound) {
-                            return doen
-                        }
-                    } else {
-                        return nil
-                    }
+                    return doensori_routine("초", part, jamo.sound)
                 }
                 
             case .중, .모:
@@ -209,13 +212,7 @@ class HangulInputSystem {
                 case ("ㅣ", "ㅜ"): return "ㅟ" // rev
                 case ("ㅣ", "ㅡ"): return "ㅢ" // rev
                 default:
-                    if let doensori_func = doensori {
-                        if let doen = doensori_func("중", part, jamo.sound) {
-                            return doen
-                        }
-                    } else {
-                        return nil
-                    }
+                    return doensori_routine("중", part, jamo.sound)
                 }
                 
             case .종:
@@ -251,13 +248,7 @@ class HangulInputSystem {
                 case ("ㅎ" ,"ㄹ"): return "ㅀ" // rev
                 case ("ㅅ" ,"ㅂ"): return "ㅄ" // rev
                 default:
-                    if let doensori_func = doensori {
-                        if let doen = doensori_func("종", part, jamo.sound) {
-                            return doen
-                        }
-                    } else {
-                        return nil
-                    }
+                    return doensori_routine("종", part, jamo.sound)
                 }
             default:
                 return nil
@@ -318,15 +309,15 @@ class HangulInputSystem {
                     let cho = cho_jong
                     pressed?(cho)
                     prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                    prevjamo = cho
                     diff.n += 1
                     diff.change += compose(prevchar!)
+                    prevjamo = cho
                 case .종:
                     syllables.append(prev)
                     prevchar = HanChar.hangul(초: "", 중: jung.sound, 종: "")
-                    prevjamo = jung
                     diff.n += 1
                     diff.change += compose(prevchar!)
+                    prevjamo = jung
                 default:
                     break
                 }
@@ -359,22 +350,22 @@ class HangulInputSystem {
                             switch pr.type {
                             case .중, .모:
                                 if let _ = applicalbe(pr.sound, jamo: jung, prevjamo: prevjamo) {
-                                    prevjamo = jung
                                     diff.n += apply_compose(pr.sound, jung, prev).n
                                     diff.change += compose(prevchar!)
+                                    prevjamo = jung
                                 } else {
                                     pressed?(cho)
                                     prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                                    prevjamo = cho
                                     diff.n += 1
                                     diff.change += compose(prevchar!)
+                                    prevjamo = cho
                                 }
                             case .초, .종:
                                 pressed?(cho)
                                 prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                                prevjamo = cho
                                 diff.n += 1
                                 diff.change += compose(prevchar!)
+                                prevjamo = cho
                             default:
                                 break
                             }
@@ -391,6 +382,7 @@ class HangulInputSystem {
                             if case .모 = pr.type {
                                 if let _ = applicalbe(pr.sound, jamo: jung, prevjamo: prevjamo) {
                                     diff.n += apply_compose(pr.sound, jung, prev).n
+                                    prevjamo = jung
                                     cont = false
                                 }
                             }
@@ -435,15 +427,15 @@ class HangulInputSystem {
                     let cho = cho_jong
                     pressed?(cho)
                     prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                    prevjamo = cho
                     diff.n += 1
                     diff.change += compose(prevchar!)
+                    prevjamo = cho
                     break
                 case .종:
                     prevchar = HanChar.hangul(초: "", 중: jung.sound, 종: "")
-                    prevjamo = jung
                     diff.n += 1
                     diff.change += compose(prevchar!)
+                    prevjamo = jung
                 default:
                     break
                 }

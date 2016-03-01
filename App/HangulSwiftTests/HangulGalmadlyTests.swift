@@ -77,7 +77,7 @@ class HangulGalmadlyTests: WTestCase {
         system.input(Jamo(type: .갈(중성("ㅏ"), 종성("ㅍ")), sound: ""))
         Assert.equal("ㅘ", system.text)
         system.input(.BACKSPACE)
-        Assert.equal("", system.text)
+        Assert.equal("", system.text) // 자소 단위?
     }
 
     func testㅘ_ㅏㅗ() {
@@ -87,7 +87,7 @@ class HangulGalmadlyTests: WTestCase {
         system.input(Jamo(type: .모, sound: "ㅗ"))
         Assert.equal("ㅘ", system.text)
         system.input(.BACKSPACE)
-        Assert.equal("", system.text)
+        Assert.equal("", system.text) // 자소 단위?
     }
 
     func testㅟ_ㅜㅣ() {
@@ -107,7 +107,7 @@ class HangulGalmadlyTests: WTestCase {
         system.input(Jamo(type: .모, sound: "ㅜ"))
         Assert.equal("ㅟ", system.text)
         system.input(.BACKSPACE)
-        Assert.equal("", system.text)
+        Assert.equal("", system.text) // 자소 단위?
     }
 
     func test_ㅣ() {
@@ -146,6 +146,8 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("치", system.text)
         system.input(Jamo(type: .갈(모음("ㅜ"), 초성("ㅊ")), sound: ""))
         Assert.equal("취", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("ㅊ", system.text) // 자소 단위?
     }
     
     func test의_ㅇㅡㅣ() {
@@ -156,6 +158,8 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("으", system.text)
         system.input(중성("ㅣ"))
         Assert.equal("의", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("ㅇ", system.text)  // 자소 단위?
     }
 
     func test_unicodeScalars() {
