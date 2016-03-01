@@ -11,7 +11,7 @@ import Foundation
 
 enum JamoLine {
 //    case Empty
-//    case Comment(String) // 음
+//    case Comment(String) // 주
     case Just(String)
     case Normal(String, String) // 외
     case 초(String, String)
@@ -55,7 +55,7 @@ class KeyMapper {
                     rows.append(row)
                     row = [JamoLine]()
                 }
-            } else if line.hasPrefix("음") {
+            } else if line.hasPrefix("주") {
                 // Comment
             } else {
                 let item = split_by(space: line)
