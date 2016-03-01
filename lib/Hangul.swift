@@ -60,100 +60,6 @@ extension String {
     }
 }
 
-func applicalbe(part: String, jamo: Jamo, prevjamo: Jamo?) -> String? {
-    if part.isEmpty {
-        return jamo.sound
-    } else {
-        switch jamo.type {
-        case .갈(_,_):
-            return nil
-            
-        case .초:
-            if let preja: Jamo = prevjamo {
-                if case .초 = preja.type {
-                } else {
-                    return nil
-                }
-            }
-            switch (part, jamo.sound) {
-            case ("ㄱ" ,"ㄱ"): return "ㄲ"
-            case ("ㄷ" ,"ㄷ"): return "ㄸ"
-            case ("ㅂ" ,"ㅂ"): return "ㅃ"
-            case ("ㅅ" ,"ㅅ"): return "ㅆ"
-            case ("ㅈ" ,"ㅈ"): return "ㅉ"
-            default: return nil
-            }
-            
-        case .중, .모:
-            if let preja: Jamo = prevjamo {
-                switch preja.type {
-                case .중, .모:
-                    break
-                default:
-                    return nil
-                }
-            }
-            switch (part, jamo.sound) {
-//            case ("ㅏ", "ㅣ"): return "ㅐ"
-//            case ("ㅑ", "ㅣ"): return "ㅒ"
-//            case ("ㅓ", "ㅣ"): return "ㅔ"
-//            case ("ㅕ", "ㅣ"): return "ㅖ"
-            case ("ㅗ", "ㅏ"): return "ㅘ"
-            case ("ㅗ", "ㅐ"): return "ㅙ"
-            case ("ㅗ", "ㅣ"): return "ㅚ"
-            case ("ㅜ", "ㅓ"): return "ㅝ"
-            case ("ㅜ", "ㅔ"): return "ㅞ"
-            case ("ㅜ", "ㅣ"): return "ㅟ"
-            case ("ㅡ", "ㅣ"): return "ㅢ"
-            case ("ㅏ", "ㅗ"): return "ㅘ" // rev
-            case ("ㅐ", "ㅗ"): return "ㅙ" // rev
-            case ("ㅣ", "ㅗ"): return "ㅚ" // rev
-            case ("ㅓ", "ㅜ"): return "ㅝ" // rev
-            case ("ㅔ", "ㅜ"): return "ㅞ" // rev
-            case ("ㅣ", "ㅜ"): return "ㅟ" // rev
-            case ("ㅣ", "ㅡ"): return "ㅢ" // rev
-            default: return nil
-            }
-            
-        case .종:
-            if let preja: Jamo = prevjamo {
-                if case .종 = preja.type {
-                } else {
-                    return nil
-                }
-            }
-            switch (part, jamo.sound) {
-            case ("ㄱ" ,"ㄱ"): return "ㄲ"
-            case ("ㄱ" ,"ㅅ"): return "ㄳ"
-            case ("ㄴ" ,"ㅈ"): return "ㄵ"
-            case ("ㄴ" ,"ㅎ"): return "ㄶ"
-            case ("ㄹ" ,"ㄱ"): return "ㄺ"
-            case ("ㄹ" ,"ㅁ"): return "ㄻ"
-            case ("ㄹ" ,"ㅂ"): return "ㄼ"
-            case ("ㄹ" ,"ㅅ"): return "ㄽ"
-            case ("ㄹ" ,"ㅌ"): return "ㄾ"
-            case ("ㄹ" ,"ㅍ"): return "ㄿ"
-            case ("ㄹ" ,"ㅎ"): return "ㅀ"
-            case ("ㅂ" ,"ㅅ"): return "ㅄ"
-            case ("ㅅ" ,"ㅅ"): return "ㅆ"
-            case ("ㅅ" ,"ㄱ"): return "ㄳ" // rev
-            case ("ㅈ" ,"ㄴ"): return "ㄵ" // rev
-            case ("ㅎ" ,"ㄴ"): return "ㄶ" // rev
-            case ("ㄱ" ,"ㄹ"): return "ㄺ" // rev
-            case ("ㅁ" ,"ㄹ"): return "ㄻ" // rev
-            case ("ㅂ" ,"ㄹ"): return "ㄼ" // rev
-            case ("ㅅ" ,"ㄹ"): return "ㄽ" // rev
-            case ("ㅌ" ,"ㄹ"): return "ㄾ" // rev
-            case ("ㅍ" ,"ㄹ"): return "ㄿ" // rev
-            case ("ㅎ" ,"ㄹ"): return "ㅀ" // rev
-            case ("ㅅ" ,"ㅂ"): return "ㅄ" // rev
-            default: return nil
-            }
-        default:
-            return nil
-        }
-    }
-}
 
 func compose(syllable: HanChar) -> String {
     switch syllable {
@@ -241,7 +147,125 @@ class HangulInputSystem {
     var prevchar: HanChar? = nil
     var prevjamo: Jamo? = nil
     var pressed: ((Jamo)->Void)? = nil
+    var doensori: ((String, String, String) -> String?)? = nil
     
+    func applicalbe(part: String, jamo: Jamo, prevjamo: Jamo?) -> String? {
+        if part.isEmpty {
+            return jamo.sound
+        } else {
+            switch jamo.type {
+            case .갈(_,_):
+                return nil
+                
+            case .초:
+                if let preja: Jamo = prevjamo {
+                    if case .초 = preja.type {
+                    } else {
+                        return nil
+                    }
+                }
+                switch (part, jamo.sound) {
+                case ("ㄱ" ,"ㄱ"): return "ㄲ"
+                case ("ㄷ" ,"ㄷ"): return "ㄸ"
+                case ("ㅂ" ,"ㅂ"): return "ㅃ"
+                case ("ㅅ" ,"ㅅ"): return "ㅆ"
+                case ("ㅈ" ,"ㅈ"): return "ㅉ"
+                default:
+                    if let doensori_func = doensori {
+                        if let doen = doensori_func("초", part, jamo.sound) {
+                            return doen
+                        }
+                    } else {
+                        return nil
+                    }
+                }
+                
+            case .중, .모:
+                if let preja: Jamo = prevjamo {
+                    switch preja.type {
+                    case .중, .모:
+                        break
+                    default:
+                        return nil
+                    }
+                }
+                switch (part, jamo.sound) {
+//              case ("ㅏ", "ㅣ"): return "ㅐ"
+//              case ("ㅑ", "ㅣ"): return "ㅒ"
+//              case ("ㅓ", "ㅣ"): return "ㅔ"
+//              case ("ㅕ", "ㅣ"): return "ㅖ"
+                case ("ㅗ", "ㅏ"): return "ㅘ"
+                case ("ㅗ", "ㅐ"): return "ㅙ"
+                case ("ㅗ", "ㅣ"): return "ㅚ"
+                case ("ㅜ", "ㅓ"): return "ㅝ"
+                case ("ㅜ", "ㅔ"): return "ㅞ"
+                case ("ㅜ", "ㅣ"): return "ㅟ"
+                case ("ㅡ", "ㅣ"): return "ㅢ"
+                case ("ㅏ", "ㅗ"): return "ㅘ" // rev
+                case ("ㅐ", "ㅗ"): return "ㅙ" // rev
+                case ("ㅣ", "ㅗ"): return "ㅚ" // rev
+                case ("ㅓ", "ㅜ"): return "ㅝ" // rev
+                case ("ㅔ", "ㅜ"): return "ㅞ" // rev
+                case ("ㅣ", "ㅜ"): return "ㅟ" // rev
+                case ("ㅣ", "ㅡ"): return "ㅢ" // rev
+                default:
+                    if let doensori_func = doensori {
+                        if let doen = doensori_func("중", part, jamo.sound) {
+                            return doen
+                        }
+                    } else {
+                        return nil
+                    }
+                }
+                
+            case .종:
+                if let preja: Jamo = prevjamo {
+                    if case .종 = preja.type {
+                    } else {
+                        return nil
+                    }
+                }
+                switch (part, jamo.sound) {
+                case ("ㄱ" ,"ㄱ"): return "ㄲ"
+                case ("ㄱ" ,"ㅅ"): return "ㄳ"
+                case ("ㄴ" ,"ㅈ"): return "ㄵ"
+                case ("ㄴ" ,"ㅎ"): return "ㄶ"
+                case ("ㄹ" ,"ㄱ"): return "ㄺ"
+                case ("ㄹ" ,"ㅁ"): return "ㄻ"
+                case ("ㄹ" ,"ㅂ"): return "ㄼ"
+                case ("ㄹ" ,"ㅅ"): return "ㄽ"
+                case ("ㄹ" ,"ㅌ"): return "ㄾ"
+                case ("ㄹ" ,"ㅍ"): return "ㄿ"
+                case ("ㄹ" ,"ㅎ"): return "ㅀ"
+                case ("ㅂ" ,"ㅅ"): return "ㅄ"
+                case ("ㅅ" ,"ㅅ"): return "ㅆ"
+                case ("ㅅ" ,"ㄱ"): return "ㄳ" // rev
+                case ("ㅈ" ,"ㄴ"): return "ㄵ" // rev
+                case ("ㅎ" ,"ㄴ"): return "ㄶ" // rev
+                case ("ㄱ" ,"ㄹ"): return "ㄺ" // rev
+                case ("ㅁ" ,"ㄹ"): return "ㄻ" // rev
+                case ("ㅂ" ,"ㄹ"): return "ㄼ" // rev
+                case ("ㅅ" ,"ㄹ"): return "ㄽ" // rev
+                case ("ㅌ" ,"ㄹ"): return "ㄾ" // rev
+                case ("ㅍ" ,"ㄹ"): return "ㄿ" // rev
+                case ("ㅎ" ,"ㄹ"): return "ㅀ" // rev
+                case ("ㅅ" ,"ㅂ"): return "ㅄ" // rev
+                default:
+                    if let doensori_func = doensori {
+                        if let doen = doensori_func("종", part, jamo.sound) {
+                            return doen
+                        }
+                    } else {
+                        return nil
+                    }
+                }
+            default:
+                return nil
+            }
+        }
+        return nil
+    }
+
     internal func apply_compose(part: String, _ jamo: Jamo, _ prev: HanChar) -> AutomataDiff {
         var n: Int = 0
         let idx = indexof(jamo)
