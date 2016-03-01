@@ -24,7 +24,11 @@ _ 외 _
 - 외 -
 + 외 + 
 = 외 =
+특 특 BACKSPACE
+특 특 BACKSPACE
 
+특 특 KEYMAP
+특 특 KEYMAP
 Q 종 ㅍ 
 q 종 ㅅ
 W 종 ㅌ 
@@ -52,6 +56,8 @@ p 초 ㅍ
 | 외 |
 \ 외 \
 
+특 특 SHIFT
+특 특 SHIFT
 A 종 ㄷ
 a 종 ㅇ
 S 종 ㄶ
@@ -74,7 +80,11 @@ l 초 ㅈ
 ; 초 ㅂ
 " 외 "
 ' 초 ㅌ
+특 특 SPACE
+특 특 SPACE
 
+특 특 NEXT_INPUT_MODE
+특 특 NEXT_INPUT_MODE
 Z 종 ㅊ 
 z 종 ㅁ
 X 종 ㅄ
@@ -95,3 +105,5 @@ m 초 ㅎ
 . 외 .
 ? 외 ? 
 / 모 ㅗ
+특 특 RETURN
+특 특 RETURN

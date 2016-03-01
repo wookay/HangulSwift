@@ -31,9 +31,9 @@ class HangulGalmadlyTests: WTestCase {
         system.input(Jamo(type: .초, sound: "ㄷ"))
         system.input(Jamo(type: .갈(중성("ㅓ"), 종성("ㅊ")), sound: ""))
         Assert.equal("더", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("ㄷ", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("", system.text)
     }
     
@@ -43,9 +43,9 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("ㅓ", system.text)
         system.input(Jamo(type: .초, sound: "ㄷ"))
         Assert.equal("더", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("ㅓ", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("", system.text)
     }
     
@@ -55,9 +55,9 @@ class HangulGalmadlyTests: WTestCase {
         system.input(Jamo(type: .중, sound: "ㅓ"))
         system.input(Jamo(type: .갈(중성("ㅓ"), 종성("ㅊ")), sound: ""))
         Assert.equal("덫", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("더", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("", system.text) // TODO: 자소단위
     }
     
@@ -66,7 +66,7 @@ class HangulGalmadlyTests: WTestCase {
         system.input(Jamo(type: .초, sound: "ㅁ"))
         system.input(Jamo(type: .모, sound: "ㅗ"))
         Assert.equal("모", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("ㅁ", system.text)
     }
 
@@ -76,7 +76,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("ㅗ", system.text)
         system.input(Jamo(type: .갈(중성("ㅏ"), 종성("ㅍ")), sound: ""))
         Assert.equal("ㅘ", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("", system.text)
     }
 
@@ -86,7 +86,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("ㅏ", system.text)
         system.input(Jamo(type: .모, sound: "ㅗ"))
         Assert.equal("ㅘ", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("", system.text)
     }
 
@@ -96,7 +96,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("ㅜ", system.text)
         system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅎ")), sound: ""))
         Assert.equal("ㅟ", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("", system.text)
     }
     
@@ -106,7 +106,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("ㅣ", system.text)
         system.input(Jamo(type: .모, sound: "ㅜ"))
         Assert.equal("ㅟ", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("", system.text)
     }
 
@@ -124,7 +124,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("ㅋ", system.text)
         system.input(Jamo(type: .갈(중성("ㅗ"), 초성("ㅋ")), sound: ""))
         Assert.equal("코", system.text)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         Assert.equal("ㅋ", system.text)
     }
 

@@ -52,7 +52,7 @@ class KeyMapperTests: WTestCase {
         let rows = jamo_mapper_rows(path)
         Assert.equal(4, rows.count)
         var tested = 0
-        if case let .갈(sym, _, a, _, b) = rows[1][5] {
+        if case let .갈(sym, _, a, _, b) = rows[1][7] {
             Assert.equal("e", sym)
             Assert.equal("ㅕ", a)
             Assert.equal("ㅈ", b)
@@ -66,7 +66,7 @@ class KeyMapperTests: WTestCase {
         let rows = jamo_mapper_rows(path)
         Assert.equal(4, rows.count)
         var tested = 0
-        if case let .갈(sym, _, a, btype, b) = rows[1][15] {
+        if case let .갈(sym, _, a, btype, b) = rows[1][17] {
             Assert.equal("i", sym)
             Assert.equal("ㅡ", a)
             Assert.equal("초", btype)

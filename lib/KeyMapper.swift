@@ -8,9 +8,6 @@
 
 import Foundation
 
-func split_by(LF str: String) -> [String] {
-    return str.componentsSeparatedByString("\n")
-}
 
 enum JamoLine {
 //    case Empty
@@ -22,15 +19,23 @@ enum JamoLine {
     case 종(String, String)
     case 갈(String, String, String, String, String) // 갈마들이
     case 모(String, String) // 이중모음용
+    case 특(String)
 }
 
+func split_by(LF str: String) -> [String] {
+    return str.componentsSeparatedByString("\n")
+}
 
 class KeyMapper {
 
-    func load(path: String) -> [[JamoLine]] {
+    func load_path(path: String) -> [[JamoLine]] {
         return parse(read_keymap_file(path))
     }
     
+    func load_string(str: String) -> [[JamoLine]] {
+        return parse(str)
+    }
+
     internal func read_keymap_file(path: String) -> String {
         do {
             return try NSString(contentsOfFile: path, encoding: NSUTF8StringEncoding) as String
@@ -69,6 +74,8 @@ class KeyMapper {
                          row.append(.종(sym, sound))
                     case "모":
                         row.append(.모(sym, sound))
+                    case "특":
+                        row.append(.특(sound))
                     default:
                         row.append(.Normal(sym, sound))
                     }
@@ -90,6 +97,5 @@ class KeyMapper {
 }
 
 func jamo_mapper_rows(path: String) -> [[JamoLine]] {
-    let mapper = KeyMapper()
-    return mapper.load(path)
+    return KeyMapper().load_path(path)
 }

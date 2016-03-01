@@ -16,7 +16,7 @@ enum HanChar {
 
 indirect enum JamoType {
     case Normal
-    case Special(key: Int32)
+    case Special(key: SpecialKeyType)
     case 초
     case 중
     case 종
@@ -34,14 +34,15 @@ let 유니코드_가 = 0xAC00
 let 유니코드_히흫 = 0xD7A3
 let 초성오프셋 = 21 * 28
 let 중성오프셋 = 28
-
-func split_by(space str: String) -> [String] {
-    return str.componentsSeparatedByString(" ")
-}
+let 모음ㆍ = "ㆍ"
 
 let 초성표 = split_by(space: "ㄱ ㄲ ㄴ ㄷ ㄸ ㄹ ㅁ ㅂ ㅃ ㅅ ㅆ ㅇ ㅈ ㅉ ㅊ ㅋ ㅌ ㅍ ㅎ")
 let 중성표 = split_by(space: "ㅏ ㅐ ㅑ ㅒ ㅓ ㅔ ㅕ ㅖ ㅗ ㅘ ㅙ ㅚ ㅛ ㅜ ㅝ ㅞ ㅟ ㅠ ㅡ ㅢ ㅣ")
 let 종성표 = [""] + split_by(space: "ㄱ ㄲ ㄳ ㄴ ㄵ ㄶ ㄷ ㄹ ㄺ ㄻ ㄼ ㄽ ㄾ ㄿ ㅀ ㅁ ㅂ ㅄ ㅅ ㅆ ㅇ ㅈ ㅊ ㅋ ㅌ ㅍ ㅎ")
+
+func split_by(space str: String) -> [String] {
+    return str.componentsSeparatedByString(" ")
+}
 
 extension String {
     var hanchar: HanChar {
@@ -154,8 +155,6 @@ func applicalbe(part: String, jamo: Jamo, prevjamo: Jamo?) -> String? {
     }
 }
 
-let 아래아 = "ㆍ"
-
 func compose(syllable: HanChar) -> String {
     switch syllable {
     case let .normal(value) :
@@ -171,7 +170,7 @@ func compose(syllable: HanChar) -> String {
         case ("", "", 종):
             return ""
         default:
-            if 아래아 == 중 {
+            if 모음ㆍ == 중 {
                 var s = ""
                 if let 초값 = 초성표.indexOf(초) {
                     s += String(UnicodeScalar(0x1100 + 초값))
@@ -200,8 +199,15 @@ func compose(syllable: HanChar) -> String {
     }
 }
 
-
-let BACKSPACE = Int32(8)
+enum SpecialKeyType: Int32 {
+    case BACKSPACE = 8
+    case RETURN = 13
+    case SHIFT = 15
+    case SPACE = 32
+    case NEXT_INPUT_MODE = 1000
+    case KEYMAP = 1001
+    case NOTHING = -1
+}
 
 struct AutomataDiff {
     var n: Int
@@ -374,7 +380,7 @@ class HangulInputSystem {
                 default:
                     break
                 }
-            case (_, .Special(BACKSPACE)):
+            case (_, .Special(.BACKSPACE)):
                 let df = remove_prev_input_diff(prev)
                 diff.n += df.n
                 diff.change += df.change
@@ -383,7 +389,7 @@ class HangulInputSystem {
             }
         } else {
             switch jamo.type {
-            case .Special(BACKSPACE):
+            case .Special(.BACKSPACE):
                 diff.n -= 1
                 if syllables.count > 0 {
                     syllables.removeLast()
@@ -484,7 +490,7 @@ class HangulInputSystem {
         return AutomataDiff(n: n, change: change)
     }
         
-    func input(key: Int32) {
+    func input(key: SpecialKeyType) {
         automata_diff(Jamo(type: .Special(key: key), sound: ""))
     }
     

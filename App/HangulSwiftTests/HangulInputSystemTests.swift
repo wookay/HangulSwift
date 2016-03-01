@@ -80,11 +80,11 @@ class HangulInputSystemTests: XCTestCase {
     
     func test감자_BACKSPACE() {
         let system = HangulInputSystem()
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
         system.input(Jamo(type: .초, sound: "ㄱ"))
         XCTAssertEqual("ㄱ", system.text)
-        system.input(BACKSPACE)
-        system.input(BACKSPACE)
+        system.input(.BACKSPACE)
+        system.input(.BACKSPACE)
         XCTAssertEqual("", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
         XCTAssertEqual("ㅏ", system.text)
