@@ -6,9 +6,9 @@
 //  Copyright © 2016 factorcat. All rights reserved.
 //
 
-import XCTest
+//import XCTest
 
-class HangulInputSystemTests: XCTestCase {
+class HangulInputSystemTests: WTestCase {
 
     override func setUp() {
         super.setUp()
@@ -23,195 +23,195 @@ class HangulInputSystemTests: XCTestCase {
     func test감_ㄱㅏㅁ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("ㄱ", system.text)
+        Assert.equal("ㄱ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("가", system.text)
+        Assert.equal("가", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("감", system.text)
+        Assert.equal("감", system.text)
     }
     
     func test감_ㅁㅏㄱ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("", system.text)
+        Assert.equal("", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("ㅏ", system.text)
+        Assert.equal("ㅏ", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("감", system.text)
+        Assert.equal("감", system.text)
     }
     
     func test감_ㅏㅁㄱ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("ㅏ", system.text)
+        Assert.equal("ㅏ", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("ㅏ", system.text)
+        Assert.equal("ㅏ", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("감", system.text)
+        Assert.equal("감", system.text)
     }
     
     func test과자_ㄱㅗㅏㅈㅏ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("ㄱ", system.text)
+        Assert.equal("ㄱ", system.text)
         system.input(Jamo(type: .중, sound: "ㅗ"))
-        XCTAssertEqual("고", system.text)
+        Assert.equal("고", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("과", system.text)
+        Assert.equal("과", system.text)
         system.input(Jamo(type: .초, sound: "ㅈ"))
-        XCTAssertEqual("과ㅈ", system.text)
+        Assert.equal("과ㅈ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("과자", system.text)
+        Assert.equal("과자", system.text)
     }
     
     func test과자_ㅗㅏㄱㅈㅏ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .중, sound: "ㅗ"))
-        XCTAssertEqual("ㅗ", system.text)
+        Assert.equal("ㅗ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("ㅘ", system.text)
+        Assert.equal("ㅘ", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("과", system.text)
+        Assert.equal("과", system.text)
         system.input(Jamo(type: .초, sound: "ㅈ"))
-        XCTAssertEqual("과ㅈ", system.text)
+        Assert.equal("과ㅈ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("과자", system.text)
+        Assert.equal("과자", system.text)
     }
     
     func test감자_BACKSPACE() {
         let system = HangulInputSystem()
         system.input(.BACKSPACE)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("ㄱ", system.text)
+        Assert.equal("ㄱ", system.text)
         system.input(.BACKSPACE)
         system.input(.BACKSPACE)
-        XCTAssertEqual("", system.text)
+        Assert.equal("", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("ㅏ", system.text)
+        Assert.equal("ㅏ", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("ㅏ", system.text)
+        Assert.equal("ㅏ", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("감", system.text)
+        Assert.equal("감", system.text)
         system.input(Jamo(type: .초, sound: "ㅈ"))
-        XCTAssertEqual("감ㅈ", system.text)
+        Assert.equal("감ㅈ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("감자", system.text)
+        Assert.equal("감자", system.text)
     }
 
     func testㅂㅇㅏ() {
         var system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㅂ"))
-        XCTAssertEqual("ㅂ", system.text)
+        Assert.equal("ㅂ", system.text)
         system.input(Jamo(type: .종, sound: "ㅇ"))
-        XCTAssertEqual("ㅂ", system.text)
+        Assert.equal("ㅂ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("방", system.text)
+        Assert.equal("방", system.text)
         
         system = HangulInputSystem()
         system.input(Jamo(type: .종, sound: "ㅇ"))
-        XCTAssertEqual("", system.text)
+        Assert.equal("", system.text)
         system.input(Jamo(type: .초, sound: "ㅂ"))
-        XCTAssertEqual("ㅂ", system.text)
+        Assert.equal("ㅂ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("방", system.text)
+        Assert.equal("방", system.text)
     }
     
     func test녕ㅎ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄴ"))
-        XCTAssertEqual("ㄴ", system.text)
+        Assert.equal("ㄴ", system.text)
         system.input(Jamo(type: .중, sound: "ㅕ"))
-        XCTAssertEqual("녀", system.text)
+        Assert.equal("녀", system.text)
         system.input(Jamo(type: .종, sound: "ㅇ"))
-        XCTAssertEqual("녕", system.text)
+        Assert.equal("녕", system.text)
         system.input(Jamo(type: .초, sound: "ㅎ"))
-        XCTAssertEqual("녕ㅎ", system.text)
+        Assert.equal("녕ㅎ", system.text)
     }
 
     func test돎가_ㄷㅗㄹㅁㄱㅏ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄷ"))
-        XCTAssertEqual("ㄷ", system.text)
+        Assert.equal("ㄷ", system.text)
         system.input(Jamo(type: .중, sound: "ㅗ"))
-        XCTAssertEqual("도", system.text)
+        Assert.equal("도", system.text)
         system.input(Jamo(type: .종, sound: "ㄹ"))
-        XCTAssertEqual("돌", system.text)
+        Assert.equal("돌", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("돎", system.text)
+        Assert.equal("돎", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("돎ㄱ", system.text)
+        Assert.equal("돎ㄱ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("돎가", system.text)
+        Assert.equal("돎가", system.text)
     }
     
     func test돎가_ㄷㅗㄹㄱㅁㅏ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄷ"))
-        XCTAssertEqual("ㄷ", system.text)
+        Assert.equal("ㄷ", system.text)
         system.input(Jamo(type: .중, sound: "ㅗ"))
-        XCTAssertEqual("도", system.text)
+        Assert.equal("도", system.text)
         system.input(Jamo(type: .종, sound: "ㄹ"))
-        XCTAssertEqual("돌", system.text)
+        Assert.equal("돌", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("돌ㄱ", system.text)
+        Assert.equal("돌ㄱ", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("돌ㄱ", system.text)
+        Assert.equal("돌ㄱ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("돌감", system.text)
+        Assert.equal("돌감", system.text)
     }
     
     func test돌감_ㄷㅗㄹㅏㅁㄱ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄷ"))
-        XCTAssertEqual("ㄷ", system.text)
+        Assert.equal("ㄷ", system.text)
         system.input(Jamo(type: .중, sound: "ㅗ"))
-        XCTAssertEqual("도", system.text)
+        Assert.equal("도", system.text)
         system.input(Jamo(type: .종, sound: "ㄹ"))
-        XCTAssertEqual("돌", system.text)
+        Assert.equal("돌", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("돌ㅏ", system.text)
+        Assert.equal("돌ㅏ", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("돌ㅏ", system.text)
+        Assert.equal("돌ㅏ", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("돌감", system.text)
+        Assert.equal("돌감", system.text)
     }
     
     func test돌감_ㄷㅗㄹㄱㅏㅁ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄷ"))
-        XCTAssertEqual("ㄷ", system.text)
+        Assert.equal("ㄷ", system.text)
         system.input(Jamo(type: .중, sound: "ㅗ"))
-        XCTAssertEqual("도", system.text)
+        Assert.equal("도", system.text)
         system.input(Jamo(type: .종, sound: "ㄹ"))
-        XCTAssertEqual("돌", system.text)
+        Assert.equal("돌", system.text)
         system.input(Jamo(type: .초, sound: "ㄱ"))
-        XCTAssertEqual("돌ㄱ", system.text)
+        Assert.equal("돌ㄱ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("돌가", system.text)
+        Assert.equal("돌가", system.text)
         system.input(Jamo(type: .종, sound: "ㅁ"))
-        XCTAssertEqual("돌감", system.text)
+        Assert.equal("돌감", system.text)
     }
     
     func test다다_ㄷㅏㄷㅏ() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㄷ"))
-        XCTAssertEqual("ㄷ", system.text)
+        Assert.equal("ㄷ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("다", system.text)
+        Assert.equal("다", system.text)
         system.input(Jamo(type: .초, sound: "ㄷ"))
-        XCTAssertEqual("다ㄷ", system.text)
+        Assert.equal("다ㄷ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("다다", system.text)
+        Assert.equal("다다", system.text)
     }
     
     func test많() {
         let system = HangulInputSystem()
         system.input(Jamo(type: .초, sound: "ㅁ"))
-        XCTAssertEqual("ㅁ", system.text)
+        Assert.equal("ㅁ", system.text)
         system.input(Jamo(type: .중, sound: "ㅏ"))
-        XCTAssertEqual("마", system.text)
+        Assert.equal("마", system.text)
         system.input(Jamo(type: .종, sound: "ㄶ"))
-        XCTAssertEqual("많", system.text)
+        Assert.equal("많", system.text)
     }
 
     func testPerformanceExample() {

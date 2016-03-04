@@ -9,12 +9,19 @@
 import UIKit
 
 
-enum HanChar {
-    case normal(value: String)
-    case hangul(초: String, 중: String, 종: String)
+struct JamoSet {
+    var 초: Jamo
+    var 중: Jamo
+    var 종: Jamo
 }
 
-indirect enum JamoType {
+enum HanChar {
+    case normal(value: String)
+    case hangul(set: JamoSet)
+}
+
+
+indirect enum JamoType: Equatable {
     case Normal
     case Special(key: SpecialKeyType)
     case 초
@@ -22,6 +29,29 @@ indirect enum JamoType {
     case 종
     case 모
     case 갈(Jamo, Jamo)
+}
+
+func ==(lhs: JamoType , rhs: JamoType) -> Bool {
+    switch lhs {
+    case .초:
+        if case .초 = rhs {
+            return true
+        }
+    case .중, .모:
+        switch rhs {
+        case .중, .모:
+            return true
+        default:
+            break
+        }
+    case .종:
+        if case .종 = rhs {
+            return true
+        }
+    default:
+        break
+    }
+    return false
 }
 
 struct Jamo {
@@ -53,7 +83,12 @@ extension String {
             let 초성인덱스 = (값 / 초성오프셋)
             값 %= 초성오프셋
             let (중성인덱스, 종성인덱스) = ((값 / 중성오프셋), (값 % 중성오프셋))
-            return HanChar.hangul(초: 초성표[초성인덱스], 중: 중성표[중성인덱스], 종: 종성표[종성인덱스])
+            let set = JamoSet(
+                초: Jamo(type: .초, sound: 초성표[초성인덱스]),
+                중: Jamo(type: .중, sound: 중성표[중성인덱스]),
+                종: Jamo(type: .종, sound: 종성표[종성인덱스])
+            )
+            return HanChar.hangul(set: set)
         } else {
             return HanChar.normal(value: self)
         }
@@ -65,24 +100,25 @@ func compose(syllable: HanChar) -> String {
     switch syllable {
     case let .normal(value) :
         return value
-    case let .hangul(초, 중, 종):
-        switch (초, 중, 종) {
+    case let .hangul(set):
+        let (초성, 중성, 종성) = (set.초, set.중, set.종)
+        switch (초성.sound, 중성.sound, 종성.sound) {
         case ("", "", ""):
             return ""
-        case (초, "", _):
-            return 초
-        case ("", 중, _):
-            return 중
-        case ("", "", 종):
+        case (초성.sound, "", _):
+            return 초성.sound
+        case ("", 중성.sound, _):
+            return 중성.sound
+        case ("", "", 종성.sound):
             return ""
         default:
-            if 모음ㆍ == 중 {
+            if 모음ㆍ == 중성.sound {
                 var s = ""
-                if let 초값 = 초성표.indexOf(초) {
+                if let 초값 = 초성표.indexOf(초성.sound) {
                     s += String(UnicodeScalar(0x1100 + 초값))
                 }
                 s += "\u{119E}"
-                if let 종값 = 종성표.indexOf(종) {
+                if let 종값 = 종성표.indexOf(종성.sound) {
                     if 종값 > 0 {
                         s += String(UnicodeScalar(0x11a6 + 1 + 종값))
                     }
@@ -90,13 +126,13 @@ func compose(syllable: HanChar) -> String {
                 return s
             } else {
                 var 값 = 유니코드_가
-                if let 초값 = 초성표.indexOf(초) {
+                if let 초값 = 초성표.indexOf(초성.sound) {
                     값 += 초성오프셋 * 초값
                 }
-                if let 중값 = 중성표.indexOf(중) {
+                if let 중값 = 중성표.indexOf(중성.sound) {
                     값 += 중성오프셋 * 중값
                 }
-                if let 종값 = 종성표.indexOf(종) {
+                if let 종값 = 종성표.indexOf(종성.sound) {
                     값 += 종값
                 }
                 return String(UnicodeScalar(값))
@@ -133,389 +169,432 @@ func indexof(jamo: Jamo) -> Int {
     }
 }
 
+func nameof(jamo: Jamo) -> String {
+    switch jamo.type {
+    case .초:
+        return "초"
+    case .중, .모:
+        return "중"
+    case .종:
+        return "종"
+    default:
+        return ""
+    }
+}
+
 class HangulInputSystem {
-    var syllables =  [HanChar]()
+    var syllables =  [String]()
+    var hangul: HanChar? = nil
+    var prevjamo: Jamo? = nil
+    var last_backspace: Bool = false
+    var pressed: ((Jamo)->Void)? = nil
+
+    func debug() {
+//        Log.info("hangul", hangul, "prevjamo", prevjamo, "last_backspace", last_backspace, "syllables", syllables)
+    }
+
     var text: String {
-        let str = syllables.map { syllable in compose(syllable) }.joinWithSeparator("")
-        if let prev = prevchar {
-            return str + compose(prev)
+        let str = syllables.joinWithSeparator("")
+        if let han = hangul {
+            return str + compose(han)
         } else {
             return str
         }
     }
-    
-    var prevchar: HanChar? = nil
-    var prevjamo: Jamo? = nil
-    var pressed: ((Jamo)->Void)? = nil
-    var doensori: ((String, String, String) -> String?)? = nil
-    
-    func doensori_routine(type: String, _ lhs: String, _ rhs: String) -> String? {
-        if let doensori_func = doensori {
-            if let doen = doensori_func(type, lhs, rhs) {
-                return doen
-            }
-        }
-        return nil
-    }
-    
-    func applicalbe(part: String, jamo: Jamo, prevjamo: Jamo?) -> String? {
-        if part.isEmpty {
-            return jamo.sound
-        } else {
-            switch jamo.type {
-            case .갈(_, _):
-                return nil
-                
-            case .초:
-                if let preja: Jamo = prevjamo {
-                    if case .초 = preja.type {
-                    } else {
-                        return nil
-                    }
-                }
-                switch (part, jamo.sound) {
-                case ("ㄱ" ,"ㄱ"): return "ㄲ"
-                case ("ㄷ" ,"ㄷ"): return "ㄸ"
-                case ("ㅂ" ,"ㅂ"): return "ㅃ"
-                case ("ㅅ" ,"ㅅ"): return "ㅆ"
-                case ("ㅈ" ,"ㅈ"): return "ㅉ"
-                default:
-                    return doensori_routine("초", part, jamo.sound)
-                }
-                
-            case .중, .모:
-                if let preja: Jamo = prevjamo {
-                    switch preja.type {
-                    case .중, .모:
-                        break
-                    default:
-                        return nil
-                    }
-                }
-                switch (part, jamo.sound) {
-//              case ("ㅏ", "ㅣ"): return "ㅐ"
-//              case ("ㅑ", "ㅣ"): return "ㅒ"
-//              case ("ㅓ", "ㅣ"): return "ㅔ"
-//              case ("ㅕ", "ㅣ"): return "ㅖ"
-                case ("ㅗ", "ㅏ"): return "ㅘ"
-                case ("ㅗ", "ㅐ"): return "ㅙ"
-                case ("ㅗ", "ㅣ"): return "ㅚ"
-                case ("ㅜ", "ㅓ"): return "ㅝ"
-                case ("ㅜ", "ㅔ"): return "ㅞ"
-                case ("ㅜ", "ㅣ"): return "ㅟ"
-                case ("ㅡ", "ㅣ"): return "ㅢ"
-                case ("ㅏ", "ㅗ"): return "ㅘ" // rev
-                case ("ㅐ", "ㅗ"): return "ㅙ" // rev
-                case ("ㅣ", "ㅗ"): return "ㅚ" // rev
-                case ("ㅓ", "ㅜ"): return "ㅝ" // rev
-                case ("ㅔ", "ㅜ"): return "ㅞ" // rev
-                case ("ㅣ", "ㅜ"): return "ㅟ" // rev
-                case ("ㅣ", "ㅡ"): return "ㅢ" // rev
-                default:
-                    return doensori_routine("중", part, jamo.sound)
-                }
-                
-            case .종:
-                if let preja: Jamo = prevjamo {
-                    if case .종 = preja.type {
-                    } else {
-                        return nil
-                    }
-                }
-                switch (part, jamo.sound) {
-                case ("ㄱ" ,"ㄱ"): return "ㄲ"
-                case ("ㄱ" ,"ㅅ"): return "ㄳ"
-                case ("ㄴ" ,"ㅈ"): return "ㄵ"
-                case ("ㄴ" ,"ㅎ"): return "ㄶ"
-                case ("ㄹ" ,"ㄱ"): return "ㄺ"
-                case ("ㄹ" ,"ㅁ"): return "ㄻ"
-                case ("ㄹ" ,"ㅂ"): return "ㄼ"
-                case ("ㄹ" ,"ㅅ"): return "ㄽ"
-                case ("ㄹ" ,"ㅌ"): return "ㄾ"
-                case ("ㄹ" ,"ㅍ"): return "ㄿ"
-                case ("ㄹ" ,"ㅎ"): return "ㅀ"
-                case ("ㅂ" ,"ㅅ"): return "ㅄ"
-                case ("ㅅ" ,"ㅅ"): return "ㅆ"
-                case ("ㅅ" ,"ㄱ"): return "ㄳ" // rev
-                case ("ㅈ" ,"ㄴ"): return "ㄵ" // rev
-                case ("ㅎ" ,"ㄴ"): return "ㄶ" // rev
-                case ("ㄱ" ,"ㄹ"): return "ㄺ" // rev
-                case ("ㅁ" ,"ㄹ"): return "ㄻ" // rev
-                case ("ㅂ" ,"ㄹ"): return "ㄼ" // rev
-                case ("ㅅ" ,"ㄹ"): return "ㄽ" // rev
-                case ("ㅌ" ,"ㄹ"): return "ㄾ" // rev
-                case ("ㅍ" ,"ㄹ"): return "ㄿ" // rev
-                case ("ㅎ" ,"ㄹ"): return "ㅀ" // rev
-                case ("ㅅ" ,"ㅂ"): return "ㅄ" // rev
-                default:
-                    return doensori_routine("종", part, jamo.sound)
-                }
-            default:
-                return nil
-            }
-        }
-        return nil
-    }
+        
+    var johab_dict: [String: String] = [String: String]()
+    var dejohab_dict: [String: String] = [String: String]()
 
-    internal func apply_compose(part: String, _ jamo: Jamo, _ prev: HanChar) -> AutomataDiff {
-        var n: Int = 0
-        let idx = indexof(jamo)
-        if case let .hangul(초, 중, 종) = prev {
-            var parts = [초, 중, 종]
-            if let applied = applicalbe(part, jamo: jamo, prevjamo: prevjamo) {
-                if compose(prev).isEmpty {
-                } else {
-                    n -= 1
-                }
-                parts[idx] = applied
-            } else {
-                syllables.append(prev)
-                parts[0] = ""
-                parts[1] = ""
-                parts[2] = ""
-                parts[idx] = jamo.sound
+    func doensori_routine(list: [(String, String, String, String)], custom: Bool = false) {
+        for (a,b,c,d) in list {
+            johab_dict[a + c + d] = b
+            if !custom {
+                dejohab_dict[a + b + c] = d
             }
-            let (cho, jung, jong) = (parts[0], parts[1], parts[2])
-            prevchar = HanChar.hangul(초: cho, 중: jung, 종: jong)
         }
-        return AutomataDiff(n: n, change: "")
     }
     
-    func automata_diff(jamo: Jamo) -> AutomataDiff {
-        var diff = AutomataDiff(n: 0, change: "")
-        if let prev = prevchar {
-            switch (prev, jamo.type) {
-            case (.hangul, .Normal):
-                if !compose(prev).isEmpty {
-                    syllables.append(prev)
-                }
-                prevchar = HanChar.normal(value: jamo.sound)
-            case (.normal, .Normal):
-                syllables.append(prev)
-                prevchar = HanChar.normal(value: jamo.sound)
-            case (.normal, .초):
+    init() {
+        doensori_routine(johab_list())
+    }
+    
+    func johab_list() -> [(String, String, String, String)] {
+        return [
+            ("초", "ㄲ", "ㄱ" ,"ㄱ"),
+            ("초", "ㄸ", "ㄷ" ,"ㄷ"),
+            ("초", "ㅃ", "ㅂ" ,"ㅂ"),
+            ("초", "ㅆ", "ㅅ" ,"ㅅ"),
+            ("초", "ㅉ", "ㅈ" ,"ㅈ"),
+            ("중", "ㅘ", "ㅗ", "ㅏ"),
+            ("중", "ㅙ", "ㅗ", "ㅐ"),
+            ("중", "ㅚ", "ㅗ", "ㅣ"),
+            ("중", "ㅝ", "ㅜ", "ㅓ"),
+            ("중", "ㅞ", "ㅜ", "ㅔ"),
+            ("중", "ㅟ", "ㅜ", "ㅣ"),
+            ("중", "ㅢ", "ㅡ", "ㅣ"),
+            ("중", "ㅘ", "ㅏ", "ㅗ"), // rev
+            ("중", "ㅙ", "ㅐ", "ㅗ"), // rev
+            ("중", "ㅚ", "ㅣ", "ㅗ"), // rev
+            ("중", "ㅝ", "ㅓ", "ㅜ"), // rev
+            ("중", "ㅞ", "ㅔ", "ㅜ"), // rev
+            ("중", "ㅟ", "ㅣ", "ㅜ"), // rev
+            ("중", "ㅢ", "ㅣ", "ㅡ"), // rev
+            ("종", "ㄲ", "ㄱ" ,"ㄱ"),
+            ("종", "ㄳ", "ㄱ" ,"ㅅ"),
+            ("종", "ㄵ", "ㄴ" ,"ㅈ"),
+            ("종", "ㄶ", "ㄴ" ,"ㅎ"),
+            ("종", "ㄺ", "ㄹ" ,"ㄱ"),
+            ("종", "ㄻ", "ㄹ" ,"ㅁ"),
+            ("종", "ㄼ", "ㄹ" ,"ㅂ"),
+            ("종", "ㄽ", "ㄹ" ,"ㅅ"),
+            ("종", "ㄾ", "ㄹ" ,"ㅌ"),
+            ("종", "ㄿ", "ㄹ" ,"ㅍ"),
+            ("종", "ㅀ", "ㄹ" ,"ㅎ"),
+            ("종", "ㅄ", "ㅂ" ,"ㅅ"),
+            ("종", "ㅆ", "ㅅ" ,"ㅅ"),
+            ("종", "ㄳ", "ㅅ" ,"ㄱ"), // rev
+            ("종", "ㄵ", "ㅈ" ,"ㄴ"), // rev
+            ("종", "ㄶ", "ㅎ" ,"ㄴ"), // rev
+            ("종", "ㄺ", "ㄱ" ,"ㄹ"), // rev
+            ("종", "ㄻ", "ㅁ" ,"ㄹ"), // rev
+            ("종", "ㄼ", "ㅂ" ,"ㄹ"), // rev
+            ("종", "ㄽ", "ㅅ" ,"ㄹ"), // rev
+            ("종", "ㄾ", "ㅌ" ,"ㄹ"), // rev
+            ("종", "ㄿ", "ㅍ" ,"ㄹ"), // rev
+            ("종", "ㅀ", "ㅎ" ,"ㄹ"), // rev
+            ("종", "ㅄ", "ㅅ" ,"ㅂ"), // rev
+        ]
+    }
+    
+    func deapplicalbe(prevjamo: Jamo, jamo: Jamo) -> String? {
+        if let dejohab = dejohab_dict[nameof(jamo) + prevjamo.sound + jamo.sound] {
+            return dejohab
+        }
+        return nil
+    }
+    
+    func applicalbe(prevjamo: Jamo, jamo: Jamo) -> String? {
+        if let johab = johab_dict[nameof(jamo) + prevjamo.sound + jamo.sound] {
+            return johab
+        }
+        return nil
+    }
+    
+    func append_syllable(han: HanChar) {
+        syllables.append(compose(han))
+    }
+    
+    func apply_compose(var set: JamoSet, jamo: Jamo) -> Int {
+        var n: Int = 0
+        switch jamo.type {
+        case .초:
+            if set.초.sound.isEmpty {
                 pressed?(jamo)
-                syllables.append(prev)
-                prevchar = HanChar.hangul(초: jamo.sound, 중: "", 종: "")
-            case (.normal, .중), (.normal, .모):
-                syllables.append(prev)
-                prevchar = HanChar.hangul(초: "", 중: jamo.sound, 종: "")
-            case (.normal, .종):
-                syllables.append(prev)
-                prevchar = HanChar.hangul(초: "", 중: "", 종: jamo.sound)
-            case let (.normal, .갈(jung, cho_jong)):
-                switch cho_jong.type {
-                case .초:
-                    let cho = cho_jong
-                    pressed?(cho)
-                    prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                    diff.n += 1
-                    diff.change += compose(prevchar!)
-                    prevjamo = cho
-                case .종:
-                    syllables.append(prev)
-                    prevchar = HanChar.hangul(초: "", 중: jung.sound, 종: "")
-                    diff.n += 1
-                    diff.change += compose(prevchar!)
-                    prevjamo = jung
-                default:
-                    break
-                }
-            case let (.hangul(초, _, _), .초):
-                pressed?(jamo)
-                diff.n += apply_compose(초, jamo, prev).n
-            case let (.hangul(_, 중, _), .중):
-                diff.n += apply_compose(중, jamo, prev).n
-            case let (.hangul(_, 중, _), .모):
-                diff.n += apply_compose(중, Jamo(type: .중, sound: jamo.sound), prev).n
-            case let (.hangul(_, _, 종), .종):
-                diff.n += apply_compose(종, jamo, prev).n
-            case let (.hangul(초, 중, 종), .갈(jung, cho_jong)):
-                switch cho_jong.type {
-                case .초:
-                    let cho = cho_jong
-                    if 중.isEmpty {
-                        if 초.isEmpty {
-                            pressed?(cho)
-                            prevchar = HanChar.hangul(초: cho.sound, 중: jung.sound, 종: 종)
-                            prevjamo = cho
-                        } else {
-                            prevchar = HanChar.hangul(초: 초, 중: jung.sound, 종: 종)
-                            prevjamo = jung
-                        }
-                        diff.n -= 1
-                        diff.change += compose(prevchar!)
+                set.초 = jamo
+            } else {
+                if set.중.sound.isEmpty {
+                    if let applied = applicalbe(set.초, jamo: jamo) {
+                        pressed?(jamo)
+                        set.초 = Jamo(type: .초, sound: applied)
                     } else {
-                        if let pr = prevjamo {
-                            switch pr.type {
-                            case .중, .모:
-                                if let _ = applicalbe(pr.sound, jamo: jung, prevjamo: prevjamo) {
-                                    diff.n += apply_compose(pr.sound, jung, prev).n
-                                    diff.change += compose(prevchar!)
-                                    prevjamo = jung
-                                } else {
-                                    pressed?(cho)
-                                    prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                                    diff.n += 1
-                                    diff.change += compose(prevchar!)
-                                    prevjamo = cho
-                                }
-                            case .초, .종:
-                                pressed?(cho)
-                                prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                                diff.n += 1
-                                diff.change += compose(prevchar!)
-                                prevjamo = cho
-                            default:
-                                break
-                            }
+                        if let han = hangul {
+                            pressed?(jamo)
+                            append_syllable(han)
+                            set.초 = jamo
+                            set.중.sound = ""
+                            set.종.sound = ""
+                            n += 1
                         }
                     }
-                case .종:
-                    let jong = cho_jong
-                    if 중.isEmpty {
-                        diff.n += apply_compose(중, jung, prev).n
-                        prevjamo = jung
-                    } else {
-                        var cont = true
-                        if let pr = prevjamo {
-                            if case .모 = pr.type {
-                                if let _ = applicalbe(pr.sound, jamo: jung, prevjamo: prevjamo) {
-                                    diff.n += apply_compose(pr.sound, jung, prev).n
-                                    prevjamo = jung
-                                    cont = false
-                                }
-                            }
-                        }
-                        if cont {
-                            diff.n += apply_compose(종, jong, prev).n
-                            prevjamo = jong
-                        }
+                } else {
+                    if let han = hangul {
+                        pressed?(jamo)
+                        set.초 = jamo
+                        set.중.sound = ""
+                        set.종.sound = ""
+                        append_syllable(han)
+                        n += 1
                     }
-                    diff.change += compose(prevchar!)
-                default:
-                    break
                 }
-            case (_, .Special(.BACKSPACE)):
-                let df = remove_prev_input_diff(prev)
-                diff.n += df.n
-                diff.change += df.change
-            default:
-                break
             }
-        } else {
-            switch jamo.type {
-            case .Special(.BACKSPACE):
-                diff.n -= 1
+        case .중, .모:
+            if let applied = applicalbe(set.중, jamo: jamo) {
+                if set.종.sound.isEmpty {
+                    set.중 = Jamo(type: .중, sound: applied)
+                } else {
+                    if let han = hangul {
+                        set.초.sound = ""
+                        set.중 = jamo
+                        set.종.sound = ""
+                        append_syllable(han)
+                        n += 1
+                    }
+                }
+            } else {
+                if set.중.sound.isEmpty {
+                    set.중 = jamo
+                } else {
+                    if let han = hangul {
+                        set.초.sound = ""
+                        set.중 = jamo
+                        set.종.sound = ""
+                        append_syllable(han)
+                        n += 1
+                    }
+                }
+            }
+        case .종:
+            if let applied = applicalbe(set.종, jamo: jamo) {
+                set.종 = Jamo(type: .종, sound: applied)
+            } else {
+                if set.종.sound.isEmpty {
+                    set.종 = jamo
+                } else {
+                    if let han = hangul {
+                        set.초.sound = ""
+                        set.중.sound = ""
+                        set.종 = jamo
+                        append_syllable(han)
+                        n += 1
+                    }
+                }
+            }
+        default:
+            break
+        }
+        prevjamo = jamo
+        hangul = HanChar.hangul(set: set)
+        return n
+    }
+    
+    func galma(var set: JamoSet, _ lhs: Jamo, _ rhs: Jamo) -> Int {
+        var n: Int = 0
+        switch rhs.type {
+        case .초:
+            if set.초.sound.isEmpty {
+                pressed?(rhs)
+                set.초 = rhs
+                prevjamo = rhs
+                hangul = HanChar.hangul(set: set)
+            } else {
+                if set.중.sound.isEmpty {
+                    n += apply_compose(set, jamo: lhs)
+                } else {
+                    if let applied = applicalbe(set.초, jamo: rhs) {
+                        pressed?(rhs)
+                        set.초 = Jamo(type: .초, sound: applied)
+                        prevjamo = rhs
+                        hangul = HanChar.hangul(set: set)
+                    } else {
+                        n += apply_compose(set, jamo: rhs)
+                    }
+                }
+            }
+        case .종:
+            if set.중.sound.isEmpty {
+                set.중 = lhs
+                prevjamo = lhs
+                hangul = HanChar.hangul(set: set)
+            } else {
+                if case .모 = set.중.type {
+                    if let applied = applicalbe(set.중, jamo: lhs) {
+                        set.중 = Jamo(type: .중, sound: applied)
+                        prevjamo = lhs
+                        hangul = HanChar.hangul(set: set)
+                    } else {
+                        n += apply_compose(set, jamo: rhs)
+                    }
+                } else {
+                    if set.종.sound.isEmpty {
+                        n += apply_compose(set, jamo: rhs)
+                    } else {
+                        if let applied = applicalbe(set.종, jamo: rhs) {
+                            set.종 = Jamo(type: .종, sound: applied)
+                            prevjamo = rhs
+                            hangul = HanChar.hangul(set: set)
+                        } else {
+                            n += apply_compose(set, jamo: lhs)
+                        }
+                    }
+                }
+            }
+        default:
+            break
+        }
+        return n
+    }
+    
+    func backspace_remove() -> AutomataDiff {
+        var diff = AutomataDiff(n: -1, change: "")
+        if let han = hangul {
+            if last_backspace {
+                switch han {
+                case var .hangul(set):
+                    set.초.sound = ""
+                    set.중.sound = ""
+                    set.종.sound = ""
+                    hangul = HanChar.hangul(set: set)
+                default:
+                    break
+                }
+                if let _ = prevjamo {
+                    prevjamo = nil
+                }
                 if syllables.count > 0 {
                     syllables.removeLast()
                 }
-            case .Special:
-                break
-            case .Normal:
-                prevchar = HanChar.normal(value: jamo.sound)
-            case .초:
-                pressed?(jamo)
-                prevchar = HanChar.hangul(초: jamo.sound, 중: "", 종: "")
-            case .중, .모:
-                prevchar = HanChar.hangul(초: "", 중: jamo.sound, 종: "")
-            case .종:
-                prevchar = HanChar.hangul(초: "", 중: "", 종: jamo.sound)
-            case let .갈(jung, cho_jong):
-                switch cho_jong.type {
-                case .초:
-                    let cho = cho_jong
-                    pressed?(cho)
-                    prevchar = HanChar.hangul(초: cho.sound, 중: "", 종: "")
-                    diff.n += 1
-                    diff.change += compose(prevchar!)
-                    prevjamo = cho
-                    break
-                case .종:
-                    prevchar = HanChar.hangul(초: "", 중: jung.sound, 종: "")
-                    diff.n += 1
-                    diff.change += compose(prevchar!)
-                    prevjamo = jung
+            } else {
+                last_backspace = true
+                switch han {
+                case var .hangul(set):
+                    if let prev = prevjamo {
+                        switch prev.type {
+                        case .초:
+                            if let dejohab = deapplicalbe(set.초, jamo: prev) {
+                                set.초.sound = dejohab
+                            } else {
+                                set.초.sound = ""
+                            }
+                        case .중, .모:
+                            if let dejohab = deapplicalbe(set.중, jamo: prev) {
+                                set.중 = Jamo(type: .모, sound: dejohab)
+                            } else {
+                                set.중.sound = ""
+                            }
+                            if !set.종.sound.isEmpty {
+                                prevjamo = set.종
+                            } else if !set.초.sound.isEmpty {
+                                prevjamo = set.초
+                            } else {
+                                prevjamo = nil
+                            }
+                        case .종:
+                            if let dejohab = deapplicalbe(set.종, jamo: prev) {
+                                set.종.sound = dejohab
+                            } else {
+                                set.종.sound = ""
+                            }
+                        default:
+                            if syllables.count > 0 {
+                                syllables.removeLast()
+                            }                                    
+                        }
+                        hangul = HanChar.hangul(set: set)
+                        if let han = hangul {
+                            diff.change += compose(han)
+                        }
+                    }
                 default:
                     break
                 }
-                break
             }
-        }
-        
-        switch jamo.type {
-        case .갈:
-            break
-        case .Special:
-            prevjamo = nil
-        default:
-            diff.change += compose(prevchar!)
-            prevjamo = jamo
         }
         return diff
     }
     
-    
-    internal func remove_prev_input_diff(prev: HanChar) -> AutomataDiff {
+    func automata_diff(jamo: Jamo) -> AutomataDiff {
+        var diff = AutomataDiff(n: 0, change: "")
+        if case .Special(.BACKSPACE) = jamo.type {
+            diff = backspace_remove()
+        } else {
+            last_backspace = false
+            if let han = hangul {
+                switch han {
+                case let .hangul(set):
+                    
+                    if !compose(han).isEmpty {
+                        diff.n -= 1
+                    }
 
-        var n: Int = -1
-        var change: String = ""
-        if case let .hangul(초, 중, 종) = prev {
-            if let jamo = prevjamo {
-                switch jamo.type {
-                case .Special(_), .Normal:
-                    if compose(prev).isEmpty {
-                        if syllables.count > 0 {
-                            syllables.removeLast()
+                    switch jamo.type {
+                    case .초, .중, .모, .종:
+                        diff.n += apply_compose(set, jamo: jamo)
+                    case let .갈(lhs, rhs):
+                        diff.n += galma(set, lhs, rhs)
+                    case .Normal:
+                        prevjamo = jamo
+                        if let han = hangul {
+                            if !compose(han).isEmpty {
+                                append_syllable(han)
+                                diff.n += 1
+                            }
                         }
-                    } else {
-                        n -= 1
+                        let normal = jamo.sound
+                        append_syllable(HanChar.normal(value: normal))
+                        let set = JamoSet(
+                            초: Jamo(type: .초, sound: ""),
+                            중: Jamo(type: .중, sound: ""),
+                            종: Jamo(type: .종, sound: "")
+                        )
+                        hangul = HanChar.hangul(set: set)
+                        diff.change += normal
+                    default:
+                        break
                     }
-                case .초:
-                    prevchar = HanChar.hangul(초: "", 중: 중, 종: 종)
-                case .중, .모:
-                    prevchar = HanChar.hangul(초: 초, 중: "", 종: 종)
-                case .종:
-                    prevchar = HanChar.hangul(초: 초, 중: 중, 종: "")
-                case .갈:
-                    break
-                }
-                if case .Special = jamo.type {
-                    if syllables.count > 0 {
-                        syllables.removeLast()
+                    if let han = hangul {
+                        diff.change += compose(han)
                     }
-                } else {
-
-                    if let pr = prevchar {
-                        let old = compose(pr)
-                        if !old.isEmpty {
-                            change += old
-                        }
-                    } else {
+                case .normal:
+                    prevjamo = jamo
+                    if let han = hangul {
+                        append_syllable(han)
                     }
+                    let set = JamoSet(
+                        초: Jamo(type: .초, sound: ""),
+                        중: Jamo(type: .중, sound: ""),
+                        종: Jamo(type: .종, sound: "")
+                    )
+                    hangul = HanChar.hangul(set: set)
+                    diff.change += compose(HanChar.normal(value: jamo.sound))
                 }
             } else {
-                prevchar = nil
-                if syllables.count > 0 {
-                    syllables.removeLast()
+                var set = JamoSet(
+                    초: Jamo(type: .초, sound: ""),
+                    중: Jamo(type: .중, sound: ""),
+                    종: Jamo(type: .종, sound: "")
+                )
+                if case let .갈(lhs, rhs) = jamo.type {
+                    galma(set, lhs, rhs)
+                } else {
+                    switch jamo.type {
+                    case .초:
+                        pressed?(jamo)
+                        set.초 = jamo
+                    case .중, .모:
+                        set.중 = jamo
+                    case .종:
+                        set.종 = jamo
+                    case .Normal:
+                        set.초.sound = ""
+                        set.중.sound = ""
+                        set.종.sound = ""
+                        append_syllable(HanChar.normal(value: jamo.sound))
+                    case .갈:
+                        break
+                    default:
+                        break
+                    }
+                    prevjamo = jamo
+                    hangul = HanChar.hangul(set: set)
+                }
+                if let han = hangul {
+                    diff.change += compose(han)
                 }
             }
-        } else {
-            prevchar = nil
         }
-        return AutomataDiff(n: n, change: change)
+        return diff
     }
-        
-    func input(key: SpecialKeyType) {
-        automata_diff(Jamo(type: .Special(key: key), sound: ""))
-    }
-    
-    func input(normal: String) {
-        automata_diff(Jamo(type: .Normal, sound: normal))
+
+    func input(key: SpecialKeyType) -> AutomataDiff {
+        return automata_diff(Jamo(type: .Special(key: key), sound: ""))
     }
     
-    func input(jamo: Jamo) {
-        automata_diff(jamo)
+    func input(normal: String) -> AutomataDiff {
+        return automata_diff(Jamo(type: .Normal, sound: normal))
+    }
+    
+    func input(jamo: Jamo) -> AutomataDiff {
+        return automata_diff(jamo)
     }
     
 }

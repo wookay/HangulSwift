@@ -22,17 +22,17 @@ class HanCharTests: XCTestCase {
 
     func testHangul() {
         let 감: HanChar = "감".hanchar
-        if case let .hangul(초, 중, 종) = 감 {
-            XCTAssertEqual("ㄱ", 초)
-            XCTAssertEqual("ㅏ", 중)
-            XCTAssertEqual("ㅁ", 종)
+        if case let .hangul(set) = 감 {
+            XCTAssertEqual("ㄱ", set.초.sound)
+            XCTAssertEqual("ㅏ", set.중.sound)
+            XCTAssertEqual("ㅁ", set.종.sound)
         }
         
         let 가: HanChar = "가".hanchar
-        if case let .hangul(초, 중, 종) = 가 {
-            XCTAssertEqual("ㄱ", 초)
-            XCTAssertEqual("ㅏ", 중)
-            XCTAssertEqual("", 종)
+        if case let .hangul(set) = 가 {
+            XCTAssertEqual("ㄱ",set.초.sound)
+            XCTAssertEqual("ㅏ", set.중.sound)
+            XCTAssertEqual("", set.종.sound)
         }
     }
     
