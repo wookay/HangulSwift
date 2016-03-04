@@ -8,32 +8,6 @@
 
 //import XCTest
 
-func 초성(sound: String) -> Jamo {
-    return Jamo(type: .초, sound: sound)
-}
-
-func 중성(sound: String) -> Jamo {
-    return Jamo(type: .중, sound: sound)
-}
-
-func 종성(sound: String) -> Jamo {
-    return Jamo(type: .종, sound: sound)
-}
-
-func 모음(sound: String) -> Jamo {
-    return Jamo(type: .모, sound: sound)
-}
-
-func 갈마들이(lhs: Jamo, _ rhs: Jamo) -> Jamo {
-    return Jamo(type: .갈(lhs, rhs), sound: "")
-}
-
-func 기호(sound: String) -> Jamo {
-    return Jamo(type: .Normal, sound: sound)
-}
-
-
-
 class HangulGalmadlyTests: WTestCase {
 
     func test더() {
@@ -337,32 +311,6 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("으", system.text)
     }
 
-    func test_unicodeScalars() {
-        // 한글 호환 자모 영역
-        Assert.equal(["\u{3139}"], "ㄹ".unicodeScalars.map { x in x })
-        Assert.equal(["\u{3139}", "\u{119E}"], "ㄹᆞ".unicodeScalars.map { x in x })
-        
-        // 한글 자모 영역
-        Assert.equal(["\u{1105}"], "ᄅ".unicodeScalars.map { x in x })
-        Assert.equal(["\u{1105}", "\u{119E}"], "ᄅᆞ".unicodeScalars.map { x in x })
-
-        Assert.equal(["\u{1105}", "\u{119E}", "\u{11B7}"], "ᄅᆞᆷ".unicodeScalars.map { x in x })
-        
-        // 받침
-        Assert.equal(["\u{11AF}"], "ᆯ".unicodeScalars.map { x in x })
-        Assert.equal(["\u{11B7}"], "ᆷ".unicodeScalars.map { x in x })
-    }
-
-    func testᄅᆞ_ㄹㆍ() {
-        let system = HangulInputSystem()
-        system.input(초성("ㄹ"))
-        Assert.equal("ㄹ", system.text)
-        system.input(갈마들이(모음("ㆍ"), 초성("ㅍ")))
-        Assert.equal("\u{1105}" + "\u{119E}", system.text)
-        system.input(종성("ㅁ"))
-        Assert.equal("\u{1105}" + "\u{119E}" + "\u{11B7}", system.text)
-    }
-
     func test토크() {
         let system = HangulInputSystem()
         var d: AutomataDiff
@@ -640,27 +588,31 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("", d.change)
         Assert.equal(0, d.n)
     }
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+
+    func testᄅᆞ_ㄹㆍ() {
+        let system = HangulInputSystem()
+        system.input(초성("ㄹ"))
+        Assert.equal("ㄹ", system.text)
+        system.input(갈마들이(모음("ㆍ"), 초성("ㅍ")))
+        Assert.equal("\u{1105}" + "\u{119E}", system.text)
+        system.input(종성("ㅁ"))
+        Assert.equal("\u{1105}" + "\u{119E}" + "\u{11B7}", system.text)
     }
     
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
+    func test_unicodeScalars() {
+        // 한글 호환 자모 영역
+        Assert.equal(["\u{3139}"], "ㄹ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{3139}", "\u{119E}"], "ㄹᆞ".unicodeScalars.map { x in x })
+        
+        // 한글 자모 영역
+        Assert.equal(["\u{1105}"], "ᄅ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{1105}", "\u{119E}"], "ᄅᆞ".unicodeScalars.map { x in x })
+        
+        Assert.equal(["\u{1105}", "\u{119E}", "\u{11B7}"], "ᄅᆞᆷ".unicodeScalars.map { x in x })
+        
+        // 받침
+        Assert.equal(["\u{11AF}"], "ᆯ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{11B7}"], "ᆷ".unicodeScalars.map { x in x })
     }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
+
 }

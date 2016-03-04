@@ -1,37 +1,24 @@
-//
-//  HangulSwiftTests.swift
-//  HangulSwiftTests
-//
-//  Created by wookyoung on 2/1/16.
-//  Copyright © 2016 factorcat. All rights reserved.
-//
 
-import XCTest
-@testable import HangulSwift
+func 초성(sound: String) -> Jamo {
+    return Jamo(type: .초, sound: sound)
+}
 
+func 중성(sound: String) -> Jamo {
+    return Jamo(type: .중, sound: sound)
+}
 
-class HangulSwiftTests: XCTestCase {
-    
-    override func setUp() {
-        super.setUp()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        super.tearDown()
-    }
-    
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
-        }
-    }
-    
+func 종성(sound: String) -> Jamo {
+    return Jamo(type: .종, sound: sound)
+}
+
+func 모음(sound: String) -> Jamo {
+    return Jamo(type: .모, sound: sound)
+}
+
+func 갈마들이(lhs: Jamo, _ rhs: Jamo) -> Jamo {
+    return Jamo(type: .갈(lhs, rhs), sound: "")
+}
+
+func 기호(sound: String) -> Jamo {
+    return Jamo(type: .Normal, sound: sound)
 }
