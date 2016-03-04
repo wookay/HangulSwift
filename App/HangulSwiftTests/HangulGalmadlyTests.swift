@@ -8,32 +8,34 @@
 
 //import XCTest
 
+func 초성(sound: String) -> Jamo {
+    return Jamo(type: .초, sound: sound)
+}
+
+func 중성(sound: String) -> Jamo {
+    return Jamo(type: .중, sound: sound)
+}
+
+func 종성(sound: String) -> Jamo {
+    return Jamo(type: .종, sound: sound)
+}
+
+func 모음(sound: String) -> Jamo {
+    return Jamo(type: .모, sound: sound)
+}
+
+func 갈마들이(lhs: Jamo, _ rhs: Jamo) -> Jamo {
+    return Jamo(type: .갈(lhs, rhs), sound: "")
+}
+
+func 기호(sound: String) -> Jamo {
+    return Jamo(type: .Normal, sound: sound)
+}
+
+
+
 class HangulGalmadlyTests: WTestCase {
 
-    func 초성(sound: String) -> Jamo {
-        return Jamo(type: .초, sound: sound)
-    }
-
-    func 중성(sound: String) -> Jamo {
-        return Jamo(type: .중, sound: sound)
-    }
-    
-    func 종성(sound: String) -> Jamo {
-        return Jamo(type: .종, sound: sound)
-    }
-    
-    func 모음(sound: String) -> Jamo {
-        return Jamo(type: .모, sound: sound)
-    }
-    
-    func 갈마들이(lhs: Jamo, _ rhs: Jamo) -> Jamo {
-        return Jamo(type: .갈(lhs, rhs), sound: "")
-    }
-    
-    func 기호(sound: String) -> Jamo {
-        return Jamo(type: .Normal, sound: sound)
-    }
-    
     func test더() {
         let system = HangulInputSystem()
         var d: AutomataDiff
@@ -247,16 +249,16 @@ class HangulGalmadlyTests: WTestCase {
         let system = HangulInputSystem()
         system.input(" ")
         Assert.equal(" ", system.text)
-        system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅎ")), sound: ""))
+        system.input(갈마들이(중성("ㅣ"), 종성("ㅎ")))
         Assert.equal(" ㅣ", system.text)
     }
 
     func test코() {
         let system = HangulInputSystem()
-        system.input(Jamo(type: .갈(중성("ㅗ"), 초성("ㅋ")), sound: ""))
+        system.input(갈마들이(중성("ㅗ"), 초성("ㅋ")))
         
         Assert.equal("ㅋ", system.text)
-        system.input(Jamo(type: .갈(중성("ㅗ"), 초성("ㅋ")), sound: ""))
+        system.input(갈마들이(중성("ㅗ"), 초성("ㅋ")))
         Assert.equal("코", system.text)
         system.input(.BACKSPACE)
         Assert.equal("ㅋ", system.text)
@@ -270,19 +272,19 @@ class HangulGalmadlyTests: WTestCase {
         system.input(중성("ㅣ"))
         Assert.equal("티", system.text)
         
-        system.input(Jamo(type: .갈(모음("ㅗ"), 초성("ㅋ")), sound: ""))
+        system.input(갈마들이(모음("ㅗ"), 초성("ㅋ")))
         Assert.equal("티ㅋ", system.text)
     }
 
     func test취_ㅊㅜㅣ() {
         let system = HangulInputSystem()
-        system.input(Jamo(type: .갈(모음("ㅜ"), 초성("ㅊ")), sound: ""))
+        system.input(갈마들이(모음("ㅜ"), 초성("ㅊ")))
         Assert.equal("ㅊ", system.text)
-        system.input(Jamo(type: .갈(모음("ㅜ"), 초성("ㅊ")), sound: ""))
+        system.input(갈마들이(모음("ㅜ"), 초성("ㅊ")))
         Assert.equal("추", system.text)
         system.input(중성("ㅣ"))
         Assert.equal("취", system.text)
-        system.input(Jamo(type: .갈(모음("ㅡ"), 초성("ㅁ")), sound: ""))
+        system.input(갈마들이(모음("ㅡ"), 초성("ㅁ")))
         Assert.equal("취ㅁ", system.text)
     }
 
@@ -327,7 +329,7 @@ class HangulGalmadlyTests: WTestCase {
         let system = HangulInputSystem()
         system.input(초성("ㅇ"))
         Assert.equal("ㅇ", system.text)
-        system.input(Jamo(type: .갈(모음("ㅡ"), 초성("ㅁ")), sound: ""))
+        system.input(갈마들이(모음("ㅡ"), 초성("ㅁ")))
         Assert.equal("으", system.text)
         system.input(중성("ㅣ"))
         Assert.equal("의", system.text)
@@ -355,7 +357,7 @@ class HangulGalmadlyTests: WTestCase {
         let system = HangulInputSystem()
         system.input(초성("ㄹ"))
         Assert.equal("ㄹ", system.text)
-        system.input(Jamo(type: .갈(모음("ㆍ"), 초성("ㅍ")), sound: ""))
+        system.input(갈마들이(모음("ㆍ"), 초성("ㅍ")))
         Assert.equal("\u{1105}" + "\u{119E}", system.text)
         system.input(종성("ㅁ"))
         Assert.equal("\u{1105}" + "\u{119E}" + "\u{11B7}", system.text)
@@ -366,11 +368,11 @@ class HangulGalmadlyTests: WTestCase {
         var d: AutomataDiff
         
         d = system.input(초성("ㅌ"))
-        d = system.input(Jamo(type: .갈(모음("ㅗ"), 초성("ㅋ")), sound: ""))
+        d = system.input(갈마들이(모음("ㅗ"), 초성("ㅋ")))
         Assert.equal("토", system.text)
         d = system.input(초성("ㅋ"))
         Assert.equal("토ㅋ", system.text)
-        d = system.input(Jamo(type: .갈(모음("ㅡ"), 종성("ㅋ")), sound: ""))
+        d = system.input(갈마들이(모음("ㅡ"), 종성("ㅋ")))
         Assert.equal("토크", system.text)
         Assert.equal("크", d.change)
         Assert.equal(-1, d.n)
@@ -381,18 +383,18 @@ class HangulGalmadlyTests: WTestCase {
         var d: AutomataDiff
 
         d = system.input(초성("ㅌ"))
-        d = system.input(Jamo(type: .갈(모음("ㅗ"), 초성("ㅋ")), sound: ""))
+        d = system.input(갈마들이(모음("ㅗ"), 초성("ㅋ")))
         Assert.equal("토", system.text)
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅎ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㅎ")))
         Assert.equal("퇴", system.text)
         d = system.input(종성("ㄴ"))
         Assert.equal("퇸", system.text)
         d = system.input(.BACKSPACE)
         Assert.equal("퇴", system.text)
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㄴ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㄴ")))
         Assert.equal("퇸", system.text)
 
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㄴ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㄴ")))
         Assert.equal("퇸ㅣ", system.text)
         Assert.equal("ㅣ", d.change)
         Assert.equal(0, d.n)
@@ -413,7 +415,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("토", d.change)
         Assert.equal(-1, d.n)
 
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅎ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㅎ")))
         Assert.equal("퇴", system.text)
         Assert.equal("퇴", d.change)
         Assert.equal(-1, d.n)
@@ -428,7 +430,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("퇴", d.change)
         Assert.equal(-1, d.n)
 
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㄴ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㄴ")))
         Assert.equal("퇸", system.text)
         
         d = system.input(.BACKSPACE)
@@ -449,13 +451,13 @@ class HangulGalmadlyTests: WTestCase {
         d = system.input(모음("ㅗ"))
         Assert.equal("초", system.text)
         
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅇ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㅇ")))
         Assert.equal("최", system.text)
         
         d = system.input(.BACKSPACE)
         Assert.equal("초", system.text)
 
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅇ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㅇ")))
         Assert.equal("최", system.text)
     }
 
@@ -470,7 +472,7 @@ class HangulGalmadlyTests: WTestCase {
         d = system.input(중성("ㅗ"))
         Assert.equal("초", system.text)
         
-        d = system.input(Jamo(type: .갈(중성("ㅣ"), 종성("ㅇ")), sound: ""))
+        d = system.input(갈마들이(중성("ㅣ"), 종성("ㅇ")))
         Assert.equal("총", system.text)
     }
 

@@ -6,9 +6,9 @@
 //  Copyright © 2016 factorcat. All rights reserved.
 //
 
-import XCTest
+//import XCTest
 
-class HanCharTests: XCTestCase {
+class HanCharTests: WTestCase {
 
     override func setUp() {
         super.setUp()
@@ -23,23 +23,23 @@ class HanCharTests: XCTestCase {
     func testHangul() {
         let 감: HanChar = "감".hanchar
         if case let .hangul(set) = 감 {
-            XCTAssertEqual("ㄱ", set.초.sound)
-            XCTAssertEqual("ㅏ", set.중.sound)
-            XCTAssertEqual("ㅁ", set.종.sound)
+            Assert.equal("ㄱ", set.초.sound)
+            Assert.equal("ㅏ", set.중.sound)
+            Assert.equal("ㅁ", set.종.sound)
         }
         
         let 가: HanChar = "가".hanchar
         if case let .hangul(set) = 가 {
-            XCTAssertEqual("ㄱ",set.초.sound)
-            XCTAssertEqual("ㅏ", set.중.sound)
-            XCTAssertEqual("", set.종.sound)
+            Assert.equal("ㄱ",set.초.sound)
+            Assert.equal("ㅏ", set.중.sound)
+            Assert.equal("", set.종.sound)
         }
     }
     
     func testNormal() {
         let A: HanChar = "A".hanchar
         if case let .normal(value) = A {
-            XCTAssertEqual("A", value)
+            Assert.equal("A", value)
         }
     }
 
