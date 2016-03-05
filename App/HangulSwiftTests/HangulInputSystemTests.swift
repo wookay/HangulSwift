@@ -23,9 +23,9 @@ class HangulInputSystemTests: WTestCase {
     func test감_ㅁㅏㄱ() {
         let system = HangulInputSystem()
         system.input(종성("ㅁ"))
-        Assert.equal("", system.text)
+        Assert.equal("ᅠᆷ", system.text)
         system.input(중성("ㅏ"))
-        Assert.equal("ㅏ", system.text)
+        Assert.equal("ᅡᆷ", system.text)
         system.input(초성("ㄱ"))
         Assert.equal("감", system.text)
     }
@@ -35,7 +35,7 @@ class HangulInputSystemTests: WTestCase {
         system.input(중성("ㅏ"))
         Assert.equal("ㅏ", system.text)
         system.input(종성("ㅁ"))
-        Assert.equal("ㅏ", system.text)
+        Assert.equal("ᅡᆷ", system.text)
         system.input(초성("ㄱ"))
         Assert.equal("감", system.text)
     }
@@ -79,7 +79,7 @@ class HangulInputSystemTests: WTestCase {
         system.input(중성("ㅏ"))
         Assert.equal("ㅏ", system.text)
         system.input(종성("ㅁ"))
-        Assert.equal("ㅏ", system.text)
+        Assert.equal("ᅡᆷ", system.text)
         system.input(초성("ㄱ"))
         Assert.equal("감", system.text)
         system.input(초성("ㅈ"))
@@ -93,15 +93,15 @@ class HangulInputSystemTests: WTestCase {
         system.input(초성("ㅂ"))
         Assert.equal("ㅂ", system.text)
         system.input(종성("ㅇ"))
-        Assert.equal("ㅂ", system.text)
+        Assert.equal("ᄇᅠᆼ", system.text) // ㅂㅇ
         system.input(중성("ㅏ"))
         Assert.equal("방", system.text)
         
         system = HangulInputSystem()
         system.input(종성("ㅇ"))
-        Assert.equal("", system.text)
+        Assert.equal("ᅠᆼ", system.text)
         system.input(초성("ㅂ"))
-        Assert.equal("ㅂ", system.text)
+        Assert.equal("ᄇᅠᆼ", system.text)
         system.input(중성("ㅏ"))
         Assert.equal("방", system.text)
     }
@@ -145,7 +145,7 @@ class HangulInputSystemTests: WTestCase {
         system.input(초성("ㄱ"))
         Assert.equal("돌ㄱ", system.text)
         system.input(종성("ㅁ"))
-        Assert.equal("돌ㄱ", system.text)
+        Assert.equal("돌ᄀᅠᆷ", system.text)
         system.input(중성("ㅏ"))
         Assert.equal("돌감", system.text)
     }
@@ -161,7 +161,7 @@ class HangulInputSystemTests: WTestCase {
         system.input(중성("ㅏ"))
         Assert.equal("돌ㅏ", system.text)
         system.input(종성("ㅁ"))
-        Assert.equal("돌ㅏ", system.text)
+        Assert.equal("돌ᅡᆷ", system.text)
         system.input(초성("ㄱ"))
         Assert.equal("돌감", system.text)
     }
@@ -203,5 +203,185 @@ class HangulInputSystemTests: WTestCase {
         system.input(종성("ㄶ"))
         Assert.equal("많", system.text)
     }
+    
+    func test감() {
+        let system = HangulInputSystem()
+        system.input(초성("ㄱ"))
+        Assert.equal("ㄱ", system.text)
+        system.input("A")
+        Assert.equal("ㄱA", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("ㄱ", system.text)
+        system.input(중성("ㅏ"))
+        Assert.equal("ㄱㅏ", system.text)
+        system.input(종성("ㅁ"))
+        Assert.equal("ㄱᅡᆷ", system.text)
+    }
+    
+    func test감자() {
+        let system = HangulInputSystem()
+        system.input(.BACKSPACE)
+        system.input(초성("ㄱ"))
+        Assert.equal("ㄱ", system.text)
+        system.input(.BACKSPACE)
+        system.input(.BACKSPACE)
+        Assert.equal("", system.text)
+        system.input(중성("ㅏ"))
+        Assert.equal("ㅏ", system.text)
+        system.input("A")
+        Assert.equal("ㅏA", system.text)
+        system.input(종성("ㅁ"))
+        Assert.equal("ㅏAᅠᆷ", system.text)
+        system.input("B")
+        Assert.equal("ㅏAᅠᆷB", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("ㅏAᅠᆷ", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("ㅏA", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("ㅏ", system.text)
+        system.input(초성("ㄱ"))
+        Assert.equal("ㅏㄱ", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("ㅏ", system.text)
+        system.input(.BACKSPACE)
+        Assert.equal("", system.text)
+        system.input(종성("ㅁ"))
+        Assert.equal("ᅠᆷ", system.text)
+        system.input(중성("ㅏ"))
+        Assert.equal("ᅡᆷ", system.text)
+        system.input(초성("ㄱ"))
+        Assert.equal("감", system.text)
+        system.input(초성("ㅈ"))
+        Assert.equal("감ㅈ", system.text)
+        system.input(중성("ㅏ"))
+        Assert.equal("감자", system.text)
+    }
+    
+    func test실() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(초성("ㅅ"))
+        Assert.equal("ㅅ", system.text)
+        
+        d = system.input(중성("ㅣ"))
+        Assert.equal("시", system.text)
+        
+        d = system.input(종성("ㄹ"))
+        Assert.equal("실", system.text)
+        
+        d = system.input(종성("ㅁ"))
+        Assert.equal("싦", system.text)
+        
+        d = system.input(종성("ㄹ"))
+        Assert.equal("싦ᅠᆯ", system.text)
+        Assert.equal("ᅠᆯ", d.change)
+        Assert.equal(0, d.n)
+    }
+    
+    func testㅂ_() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(초성("ㅂ"))
+        Assert.equal("ㅂ", system.text)
+        Assert.equal("ㅂ", d.change)
+        Assert.equal(0, d.n)
+        
+        d = system.input(기호(" "))
+        Assert.equal("ㅂ ", system.text)
+        Assert.equal(" ", d.change)
+        Assert.equal(0, d.n)
+        
+        d = system.input(기호(" "))
+        Assert.equal("ㅂ  ", system.text)
+        Assert.equal(" ", d.change)
+        Assert.equal(0, d.n)
+    }
+    
+    func testㄱ() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(초성("ㄱ"))
+        Assert.equal("ㄱ", system.text)
+        Assert.equal("ㄱ", d.change)
+        Assert.equal(0, d.n)
+        
+        d = system.input(.BACKSPACE)
+        Assert.equal("", system.text)
+        
+        d = system.input(초성("ㄱ"))
+        Assert.equal("ㄱ", system.text)
+        Assert.equal("ㄱ", d.change)
+        Assert.equal(0, d.n)
+    }
+    
+    func testㅃㅂ_ㅂㅂㅂ() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(초성("ㅂ"))
+        Assert.equal("ㅂ", system.text)
+        Assert.equal("ㅂ", d.change)
+        Assert.equal(0, d.n)
+        
+        d = system.input(초성("ㅂ"))
+        Assert.equal("ㅃ", system.text)
+        Assert.equal("ㅃ", d.change)
+        Assert.equal(-1, d.n)
+        
+        d = system.input(초성("ㅂ"))
+        Assert.equal("ㅃㅂ", system.text)
+        Assert.equal("ㅂ", d.change)
+        Assert.equal(0, d.n)
+    }
+    
+    func test기ㄱ() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(초성("ㄱ"))
+        d = system.input(중성("ㅣ"))
+        Assert.equal("기", system.text)
+        
+        d = system.input(초성("ㄱ"))
+        Assert.equal("기ㄱ", system.text)
+        Assert.equal("ㄱ", d.change)
+        Assert.equal(0, d.n)
+    }
 
+    func test모() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(초성("ㅁ"))
+        d = system.input(모음("ㅗ"))
+        Assert.equal("모", system.text)
+        Assert.equal("모", d.change)
+        Assert.equal(-1, d.n)
+        
+        d = system.input(.BACKSPACE)
+        Assert.equal("ㅁ", system.text)
+        Assert.equal("ㅁ", d.change)
+        Assert.equal(-1, d.n)
+    }
+
+    func test종성() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(종성("ㅁ"))
+        Assert.equal("ᅠᆷ", system.text)
+        Assert.equal("ᅠᆷ", d.change)
+        Assert.equal(0, d.n)
+
+        d = system.input(중성("ㅓ"))
+        Assert.equal("ᅥᆷ", system.text)
+        Assert.equal("ᅥᆷ", d.change)
+        Assert.equal(-1, d.n)
+
+    }
+    
 }

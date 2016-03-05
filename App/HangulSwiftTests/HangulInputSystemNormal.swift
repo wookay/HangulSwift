@@ -10,56 +10,20 @@
 
 class HangulInputSystemNormal: WTestCase {
 
-    func test감() {
-        let system = HangulInputSystem()
-        system.input(초성("ㄱ"))
-        Assert.equal("ㄱ", system.text)
-        system.input("A")
-        Assert.equal("ㄱA", system.text)
-        system.input(.BACKSPACE)
-        Assert.equal("ㄱ", system.text)
-        system.input(중성("ㅏ"))
-        Assert.equal("ㄱㅏ", system.text)
-        system.input(종성("ㅁ"))
-        Assert.equal("ㄱㅏ", system.text)
-    }
-    
-    func test감자() {
-        let system = HangulInputSystem()
-        system.input(.BACKSPACE)
-        system.input(초성("ㄱ"))
-        Assert.equal("ㄱ", system.text)
-        system.input(.BACKSPACE)
-        system.input(.BACKSPACE)
-        Assert.equal("", system.text)
-        system.input(중성("ㅏ"))
-        Assert.equal("ㅏ", system.text)
-        system.input("A")
-        Assert.equal("ㅏA", system.text)
-        system.input(종성("ㅁ"))
-        Assert.equal("ㅏA", system.text)
-        system.input("B")
-        Assert.equal("ㅏAB", system.text)
-        system.input(.BACKSPACE)
-        Assert.equal("ㅏA", system.text)
-        system.input(.BACKSPACE)
-        Assert.equal("ㅏ", system.text)
-        system.input(초성("ㄱ"))
-        Assert.equal("ㅏㄱ", system.text)
-        system.input(.BACKSPACE)
-        Assert.equal("ㅏ", system.text)
-        system.input(.BACKSPACE)
-        Assert.equal("", system.text)
-        system.input(종성("ㅁ"))
-        Assert.equal("", system.text)
-        system.input(중성("ㅏ"))
-        Assert.equal("ㅏ", system.text)
-        system.input(초성("ㄱ"))
-        Assert.equal("감", system.text)
-        system.input(초성("ㅈ"))
-        Assert.equal("감ㅈ", system.text)
-        system.input(중성("ㅏ"))
-        Assert.equal("감자", system.text)
+    func test_unicodeScalars() {
+        // 한글 호환 자모 영역
+        Assert.equal(["\u{3139}"], "ㄹ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{3139}", "\u{119E}"], "ㄹᆞ".unicodeScalars.map { x in x })
+        
+        // 한글 자모 영역
+        Assert.equal(["\u{1105}"], "ᄅ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{1105}", "\u{119E}"], "ᄅᆞ".unicodeScalars.map { x in x })
+        
+        Assert.equal(["\u{1105}", "\u{119E}", "\u{11B7}"], "ᄅᆞᆷ".unicodeScalars.map { x in x })
+        
+        // 받침
+        Assert.equal(["\u{11AF}"], "ᆯ".unicodeScalars.map { x in x })
+        Assert.equal(["\u{11B7}"], "ᆷ".unicodeScalars.map { x in x })
     }
 
 }

@@ -15,6 +15,7 @@
 		1C58F2441C60999B00CF033A /* KeyMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2431C60999B00CF033A /* KeyMapper.swift */; };
 		1C58F2491C6099ED00CF033A /* KeyMapperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2481C6099ED00CF033A /* KeyMapperTests.swift */; };
 		1C58F26E1C60B67600CF033A /* KeyMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2431C60999B00CF033A /* KeyMapper.swift */; };
+		1C8F6AEC1C8AA113008320F0 /* HangulSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CFE59461C5F062B003DC5E2 /* HangulSwiftTests.swift */; };
 		1CD588281C5F37F900CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
 		1CD5882F1C5F49EF00CB941E /* Hangul.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588271C5F37F900CB941E /* Hangul.swift */; };
 		1CD588311C5F4A0E00CB941E /* HangulInputSystemNormal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CD588301C5F4A0E00CB941E /* HangulInputSystemNormal.swift */; };
@@ -273,6 +274,7 @@
 				1C58F2441C60999B00CF033A /* KeyMapper.swift in Sources */,
 				1CD588281C5F37F900CB941E /* Hangul.swift in Sources */,
 				1CFE59341C5F062B003DC5E2 /* ViewController.swift in Sources */,
+				1C8F6AEC1C8AA113008320F0 /* HangulSwiftTests.swift in Sources */,
 				1CFE59321C5F062B003DC5E2 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
