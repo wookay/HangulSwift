@@ -66,4 +66,20 @@ class KeyMapperTests: WTestCase {
         Assert.equal(1, tested)
     }
 
+    func testShinSebulsik_M() {
+        let path = [NSBundle.mainBundle().resourcePath!, "ShinSebulsik-M.txt"].joinWithSeparator("/")
+        let rows = jamo_mapper_rows(path)
+        Assert.equal(4, rows.count)
+        var tested = 0
+        if case let .갈(sym, atype, a, btype, b) = rows[3][3] {
+            Assert.equal("z", sym)
+            Assert.equal("중", atype)
+            Assert.equal("ㅖ", a)
+            Assert.equal("종", btype)
+            Assert.equal("ㅁ", b)
+            tested += 1
+        }
+        Assert.equal(1, tested)
+    }
+
 }
