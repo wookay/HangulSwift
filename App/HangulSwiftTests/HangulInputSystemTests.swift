@@ -381,7 +381,59 @@ class HangulInputSystemTests: WTestCase {
         Assert.equal("ᅥᆷ", system.text)
         Assert.equal("ᅥᆷ", d.change)
         Assert.equal(-1, d.n)
-
     }
     
+    func testㅔ_ㅓㅣ() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(중성("ㅓ"))
+        Assert.equal("ㅓ", system.text)
+        
+        d = system.input(중성("ㅣ"))
+        Assert.equal("ㅔ", system.text)
+        Assert.equal("ㅔ", d.change)
+        Assert.equal(-1, d.n)
+        
+        d = system.input(.BACKSPACE)
+        Assert.equal("ㅓ", system.text)
+    }
+    
+    func test게_ㄱㅓㅣ() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+
+        d = system.input(초성("ㄱ"))
+        Assert.equal("ㄱ", system.text)
+        
+        d = system.input(중성("ㅓ"))
+        Assert.equal("거", system.text)
+        
+        d = system.input(중성("ㅣ"))
+        Assert.equal("게", system.text)
+        Assert.equal("게", d.change)
+        Assert.equal(-1, d.n)
+        
+        d = system.input(.BACKSPACE)
+        Assert.equal("거", system.text)
+    }
+
+    func test게_ㅓㅣㄱ() {
+        let system = HangulInputSystem()
+        var d: AutomataDiff
+        
+        d = system.input(중성("ㅓ"))
+        Assert.equal("ㅓ", system.text)
+        Assert.equal("ㅓ", d.change)
+        Assert.equal(0, d.n)
+        
+        d = system.input(중성("ㅣ"))
+        Assert.equal("ㅔ", system.text)
+        
+        d = system.input(초성("ㄱ"))
+        Assert.equal("게", system.text)
+        
+        d = system.input(.BACKSPACE)
+        Assert.equal("ㅔ", system.text)
+    }
 }
