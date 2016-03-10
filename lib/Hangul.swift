@@ -162,6 +162,7 @@ func compose(syllable: HanChar) -> String {
 
 enum SpecialKeyType: Int32 {
     case BACKSPACE = 8
+    case TAB = 9
     case RETURN = 13
     case SHIFT = 15
     case SPACE = 32
