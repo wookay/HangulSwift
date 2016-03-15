@@ -102,6 +102,9 @@ func lower(jamo: Jamo) -> Jamo {
     return jamo
 }
 
+let 초성채움 = "\u{115F}"
+let 중성채움 = "\u{1160}"
+
 func compose(syllable: HanChar) -> String {
     switch syllable {
     case let .normal(value) :
@@ -116,16 +119,17 @@ func compose(syllable: HanChar) -> String {
         case ("", 중성.sound, ""):
             return 중성.sound
         case ("", "", 종성.sound):
-            return "\u{1160}" + lower(종성).sound
+            return 중성채움 + lower(종성).sound
         case (초성.sound, "", 종성.sound):
             var s = ""
             if let 초값 = 초성표.indexOf(초성.sound) {
                 s += String(UnicodeScalar(0x1100 + 초값))
+            } else {
+                s += 초성채움
             }
-            s += "\u{1160}" + lower(종성).sound
-            return s
+            return s + 중성채움 + lower(종성).sound
         case ("", 중성.sound, 종성.sound):
-            var s = ""
+            var s = 초성채움
             if 모음ㆍ == 중성.sound {
                 s += "\u{119E}"
             } else {
