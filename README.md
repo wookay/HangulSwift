@@ -6,6 +6,7 @@ HangulSwift
 
 
   [![Build Status](https://api.travis-ci.org/wookay/HangulSwift.svg?branch=master)](https://travis-ci.org/wookay/HangulSwift)
+  [![Cocoapods Version](https://img.shields.io/cocoapods/v/HangulSwift.svg?style=flat)
 
 
 ```sh
