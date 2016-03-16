@@ -20,7 +20,7 @@ enum HanChar {
     case hangul(set: JamoSet)
 }
 
-indirect enum JamoType: Equatable {
+public indirect enum JamoType: Equatable {
     case Normal
     case Special(key: SpecialKeyType)
     case 초
@@ -30,7 +30,7 @@ indirect enum JamoType: Equatable {
     case 갈(Jamo, Jamo)
 }
 
-func ==(lhs: JamoType , rhs: JamoType) -> Bool {
+public func ==(lhs: JamoType , rhs: JamoType) -> Bool {
     switch lhs {
     case .초:
         if case .초 = rhs {
@@ -53,9 +53,13 @@ func ==(lhs: JamoType , rhs: JamoType) -> Bool {
     return false
 }
 
-struct Jamo {
-    var type: JamoType
-    var sound: String
+public struct Jamo {
+    public var type: JamoType
+    public var sound: String
+    public init(type: JamoType, sound: String) {
+        self.type = type
+        self.sound = sound
+    }
 }
 
 
@@ -164,7 +168,7 @@ func compose(syllable: HanChar) -> String {
     }
 }
 
-enum SpecialKeyType: Int32 {
+public enum SpecialKeyType: Int32 {
     case BACKSPACE = 8
     case TAB = 9
     case RETURN = 13
@@ -175,9 +179,9 @@ enum SpecialKeyType: Int32 {
     case NOTHING = -1
 }
 
-struct AutomataDiff {
-    var n: Int
-    var change: String
+public struct AutomataDiff {
+    public var n: Int
+    public var change: String
 }
 
 func indexof(jamo: Jamo) -> Int {
@@ -206,8 +210,8 @@ func nameof(jamo: Jamo) -> String {
     }
 }
 
-class HangulInputSystem {
-    var syllables =  [String]()
+public class HangulInputSystem {
+    public var syllables =  [String]()
     var hangul: JamoSet = JamoSet(
         초: Jamo(type: .초, sound: ""),
         중: Jamo(type: .중, sound: ""),
@@ -215,7 +219,7 @@ class HangulInputSystem {
     )
     var prevjamo: Jamo? = nil
     var last_backspace: Bool = false
-    var pressed: ((Jamo)->Void)? = nil
+    public var pressed: ((Jamo)->Void)? = nil
 
     func debug() {
 //        Log.info("hangul", hangul, "prevjamo", prevjamo, "last_backspace", last_backspace, "syllables", syllables)
@@ -229,7 +233,7 @@ class HangulInputSystem {
     var johab_dict: [String: String] = [String: String]()
     var dejohab_dict: [String: String] = [String: String]()
 
-    func doensori_routine(list: [(String, String, String, String)], custom: Bool = false) {
+    public func doensori_routine(list: [(String, String, String, String)], custom: Bool = false) {
         for (a,b,c,d) in list {
             johab_dict[a + c + d] = b
             if !custom {
@@ -238,7 +242,7 @@ class HangulInputSystem {
         }
     }
     
-    init() {
+    public init() {
         doensori_routine(johab_list())
     }
     
@@ -502,7 +506,7 @@ class HangulInputSystem {
         return diff
     }
     
-    func automata_diff(jamo: Jamo) -> AutomataDiff {
+    public func automata_diff(jamo: Jamo) -> AutomataDiff {
         var diff = AutomataDiff(n: 0, change: "")
         if case .Special(.BACKSPACE) = jamo.type {
             diff = backspace_remove()

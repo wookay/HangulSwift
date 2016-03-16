@@ -9,7 +9,7 @@
 import Foundation
 
 
-enum JamoLine {
+public enum JamoLine {
 //    case Empty
 //    case Comment(String) // 주
     case Just(String)
@@ -26,13 +26,16 @@ func split_by(LF str: String) -> [String] {
     return str.componentsSeparatedByString("\n")
 }
 
-class KeyMapper {
+public class KeyMapper {
 
-    func load_path(path: String) -> [[JamoLine]] {
+    public init() {
+    }
+    
+    public func load_path(path: String) -> [[JamoLine]] {
         return parse(read_keymap_file(path))
     }
     
-    func load_string(str: String) -> [[JamoLine]] {
+    public func load_string(str: String) -> [[JamoLine]] {
         return parse(str)
     }
 
