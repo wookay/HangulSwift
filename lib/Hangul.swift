@@ -322,7 +322,8 @@ public class HangulInputSystem {
         syllables.append(compose(HanChar.normal(value: normal)))
     }
     
-    func apply_compose(var set: JamoSet, jamo: Jamo) -> Int {
+    func apply_compose(jamoset: JamoSet, jamo: Jamo) -> (JamoSet, Int) {
+        var set = jamoset
         var n: Int = 0
         switch jamo.type {
         case .초:
@@ -392,10 +393,11 @@ public class HangulInputSystem {
         }
         prevjamo = jamo
         hangul = set
-        return n
+        return (set, n)
     }
     
-    func galma(var set: JamoSet, _ lhs: Jamo, _ rhs: Jamo) -> Int {
+    func galma(jamoset: JamoSet, _ lhs: Jamo, _ rhs: Jamo) -> (JamoSet, Int) {
+        var set = jamoset
         var n: Int = 0
         switch rhs.type {
         case .초:
@@ -405,8 +407,8 @@ public class HangulInputSystem {
                 prevjamo = rhs
                 hangul = set
             } else {
-                if set.중.sound.isEmpty {
-                    n += apply_compose(set, jamo: lhs)
+                if jamoset.중.sound.isEmpty {
+                    (set, n) = apply_compose(set, jamo: lhs)
                 } else {
                     if let applied = applicalbe(set.초, jamo: rhs) {
                         pressed?(rhs)
@@ -414,7 +416,7 @@ public class HangulInputSystem {
                         prevjamo = rhs
                         hangul = set
                     } else {
-                        n += apply_compose(set, jamo: rhs)
+                        (set, n) = apply_compose(jamoset, jamo: rhs)
                     }
                 }
             }
@@ -430,18 +432,18 @@ public class HangulInputSystem {
                         prevjamo = lhs
                         hangul = set
                     } else {
-                        n += apply_compose(set, jamo: rhs)
+                        (set, n) = apply_compose(set, jamo: rhs)
                     }
                 } else {
                     if set.종.sound.isEmpty {
-                        n += apply_compose(set, jamo: rhs)
+                        (set, n) = apply_compose(set, jamo: rhs)
                     } else {
                         if let applied = applicalbe(set.종, jamo: rhs) {
                             set.종 = Jamo(type: .종, sound: applied)
                             prevjamo = rhs
                             hangul = set
                         } else {
-                            n += apply_compose(set, jamo: lhs)
+                            (set, n) = apply_compose(set, jamo: lhs)
                         }
                     }
                 }
@@ -449,7 +451,7 @@ public class HangulInputSystem {
         default:
             break
         }
-        return n
+        return (set, n)
     }
     
     func backspace_remove() -> AutomataDiff {
@@ -512,16 +514,19 @@ public class HangulInputSystem {
             diff = backspace_remove()
         } else {
             last_backspace = false
-            let set = hangul
+            var set = hangul
             if !compose(HanChar.hangul(set: set)).isEmpty {
                 diff.n -= 1
             }
 
+            var n = 0
             switch jamo.type {
             case .초, .중, .모, .종:
-                diff.n += apply_compose(set, jamo: jamo)
+                (set, n) = apply_compose(set, jamo: jamo)
+                diff.n += n
             case let .갈(lhs, rhs):
-                diff.n += galma(set, lhs, rhs)
+                (set, n) = galma(set, lhs, rhs)
+                diff.n += n
             case .Normal:
                 prevjamo = jamo
                 if !compose(HanChar.hangul(set: hangul)).isEmpty {
@@ -542,15 +547,15 @@ public class HangulInputSystem {
         return diff
     }
 
-    func input(key: SpecialKeyType) -> AutomataDiff {
+    public func input(key: SpecialKeyType) -> AutomataDiff {
         return automata_diff(Jamo(type: .Special(key: key), sound: ""))
     }
     
-    func input(normal: String) -> AutomataDiff {
+    public func input(normal: String) -> AutomataDiff {
         return automata_diff(Jamo(type: .Normal, sound: normal))
     }
     
-    func input(jamo: Jamo) -> AutomataDiff {
+    public func input(jamo: Jamo) -> AutomataDiff {
         return automata_diff(jamo)
     }
     
