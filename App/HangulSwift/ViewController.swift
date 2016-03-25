@@ -14,7 +14,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-         UnitTest.run(only: ["KeyMapperTests", "HanCharTests", "HangulGalmadlyTests", "HangulInputSystemNormal", "HangulInputSystemTests"])
+         UnitTest.run(only: ["KeyMapperTests", "HanCharTests", "HangulGalmadlyTests", "YetHangulInputSystem", "HangulInputSystemTests"])
     }
 
     override func didReceiveMemoryWarning() {

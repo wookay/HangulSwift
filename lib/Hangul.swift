@@ -67,7 +67,6 @@ let 유니코드_가 = 0xAC00
 let 유니코드_히흫 = 0xD7A3
 let 초성오프셋 = 21 * 28
 let 중성오프셋 = 28
-let 모음ㆍ = "ㆍ"
 
 let 초성표 = split_by(space: "ㄱ ㄲ ㄴ ㄷ ㄸ ㄹ ㅁ ㅂ ㅃ ㅅ ㅆ ㅇ ㅈ ㅉ ㅊ ㅋ ㅌ ㅍ ㅎ")
 let 중성표 = split_by(space: "ㅏ ㅐ ㅑ ㅒ ㅓ ㅔ ㅕ ㅖ ㅗ ㅘ ㅙ ㅚ ㅛ ㅜ ㅝ ㅞ ㅟ ㅠ ㅡ ㅢ ㅣ")
@@ -108,6 +107,25 @@ func lower(jamo: Jamo) -> Jamo {
 
 let 초성채움 = "\u{115F}"
 let 중성채움 = "\u{1160}"
+let 초성영역 = 0x1100
+let 중성영역 = 0x1161
+
+func yethangul(sound: String) -> String? {
+    switch sound {
+    case "ㆍ":
+        return "\u{119E}"
+    case "ᆟ":
+        return "\u{119F}"
+    case "ᆠ":
+        return "\u{11A0}"
+    case "ㆎ":
+        return "\u{11A1}"
+    case "ᆢ":
+        return "\u{11A2}"
+    default:
+        return nil
+    }
+}
 
 func compose(syllable: HanChar) -> String {
     switch syllable {
@@ -127,29 +145,29 @@ func compose(syllable: HanChar) -> String {
         case (초성.sound, "", 종성.sound):
             var s = ""
             if let 초값 = 초성표.indexOf(초성.sound) {
-                s += String(UnicodeScalar(0x1100 + 초값))
+                s += String(UnicodeScalar(초성영역 + 초값))
             } else {
                 s += 초성채움
             }
             return s + 중성채움 + lower(종성).sound
         case ("", 중성.sound, 종성.sound):
             var s = 초성채움
-            if 모음ㆍ == 중성.sound {
-                s += "\u{119E}"
+            if let yet = yethangul(중성.sound) {
+                s += yet
             } else {
                 if let 중값 = 중성표.indexOf(중성.sound) {
-                    s += String(UnicodeScalar(0x1161 + 중값))
+                    s += String(UnicodeScalar(중성영역 + 중값))
                 }
             }
             s += lower(종성).sound
             return s
         default:
-            if 모음ㆍ == 중성.sound {
+            if let yet = yethangul(중성.sound) {
                 var s = ""
                 if let 초값 = 초성표.indexOf(초성.sound) {
-                    s += String(UnicodeScalar(0x1100 + 초값))
+                    s += String(UnicodeScalar(초성영역 + 초값))
                 }
-                s += "\u{119E}" + lower(종성).sound
+                s += yet + lower(종성).sound
                 return s
             } else {
                 var 값 = 유니코드_가
