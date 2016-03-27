@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 public enum JamoLine {
 //    case Empty
 //    case Comment(String) // 주
@@ -18,7 +17,7 @@ public enum JamoLine {
     case 중(String, String)
     case 종(String, String)
     case 갈(String, String, String, String, String) // 갈마들이
-    case 모(String, String) // 이중모음용
+    case 모(String, String) // 이중모음, 방점
     case 특(String)
 }
 
@@ -61,7 +60,7 @@ public class KeyMapper {
             } else if line.hasPrefix("주") {
                 // Comment
             } else {
-                let item = split_by(space: line)
+                let item = line.componentsSeparatedByString(" ")
                 switch item.count {
                 case 1:
                     let sym = item[0]

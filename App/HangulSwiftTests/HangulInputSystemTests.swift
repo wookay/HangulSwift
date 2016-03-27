@@ -8,7 +8,17 @@
 
 //import XCTest
 
-class HangulInputSystemTests: WTestCase {
+class HangulInputSystemTests: WHangulTestCase {
+
+    func test_jamo() {
+        let system = HangulInputSystem()
+        system.input(Jamo(type: .초, sound: "ㄱ"))
+        Assert.equal("ㄱ", system.text)
+        system.input(Jamo(type: .중, sound: "ㅏ"))
+        Assert.equal("가", system.text)
+        system.input(Jamo(type: .종, sound: "ㅁ"))
+        Assert.equal("감", system.text)
+    }
 
     func test감_ㄱㅏㅁ() {
         let system = HangulInputSystem()
@@ -23,7 +33,7 @@ class HangulInputSystemTests: WTestCase {
     func test감_ㅁㅏㄱ() {
         let system = HangulInputSystem()
         system.input(종성("ㅁ"))
-        Assert.equal("ᅠᆷ", system.text)
+        Assert.equal("ᅟᅠᆷ", system.text)
         system.input(중성("ㅏ"))
         Assert.equal("ᅟᅡᆷ", system.text)
         system.input(초성("ㄱ"))
@@ -99,7 +109,7 @@ class HangulInputSystemTests: WTestCase {
         
         system = HangulInputSystem()
         system.input(종성("ㅇ"))
-        Assert.equal("ᅠᆼ", system.text)
+        Assert.equal("ᅟᅠᆼ", system.text)
         system.input(초성("ㅂ"))
         Assert.equal("ᄇᅠᆼ", system.text)
         system.input(중성("ㅏ"))
@@ -231,11 +241,11 @@ class HangulInputSystemTests: WTestCase {
         system.input("A")
         Assert.equal("ㅏA", system.text)
         system.input(종성("ㅁ"))
-        Assert.equal("ㅏAᅠᆷ", system.text)
+        Assert.equal("ㅏAᅟᅠᆷ", system.text)
         system.input("B")
-        Assert.equal("ㅏAᅠᆷB", system.text)
+        Assert.equal("ㅏAᅟᅠᆷB", system.text)
         system.input(.BACKSPACE)
-        Assert.equal("ㅏAᅠᆷ", system.text)
+        Assert.equal("ㅏAᅟᅠᆷ", system.text)
         system.input(.BACKSPACE)
         Assert.equal("ㅏA", system.text)
         system.input(.BACKSPACE)
@@ -247,7 +257,7 @@ class HangulInputSystemTests: WTestCase {
         system.input(.BACKSPACE)
         Assert.equal("", system.text)
         system.input(종성("ㅁ"))
-        Assert.equal("ᅠᆷ", system.text)
+        Assert.equal("ᅟᅠᆷ", system.text)
         system.input(중성("ㅏ"))
         Assert.equal("ᅟᅡᆷ", system.text)
         system.input(초성("ㄱ"))
@@ -275,8 +285,8 @@ class HangulInputSystemTests: WTestCase {
         Assert.equal("싦", system.text)
         
         d = system.input(종성("ㄹ"))
-        Assert.equal("싦ᅠᆯ", system.text)
-        Assert.equal("ᅠᆯ", d.change)
+        Assert.equal("싦ᅟᅠᆯ", system.text)
+        Assert.equal("ᅟᅠᆯ", d.change)
         Assert.equal(0, d.n)
     }
     
@@ -373,8 +383,8 @@ class HangulInputSystemTests: WTestCase {
         var d: AutomataDiff
         
         d = system.input(종성("ㅁ"))
-        Assert.equal("ᅠᆷ", system.text)
-        Assert.equal("ᅠᆷ", d.change)
+        Assert.equal("ᅟᅠᆷ", system.text)
+        Assert.equal("ᅟᅠᆷ", d.change)
         Assert.equal(0, d.n)
 
         d = system.input(중성("ㅓ"))

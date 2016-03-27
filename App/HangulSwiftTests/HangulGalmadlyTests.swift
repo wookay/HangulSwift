@@ -8,7 +8,7 @@
 
 //import XCTest
 
-class HangulGalmadlyTests: WTestCase {
+class HangulGalmadlyTests: WHangulTestCase {
 
     func test더() {
         let system = HangulInputSystem()
@@ -192,7 +192,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("ㅣ", d.change)
         Assert.equal(0, d.n)
         
-        d = system.input(Jamo(type: .모, sound: "ㅜ"))
+        d = system.input(모음("ㅜ"))
         Assert.equal("ㅟ", system.text)
         Assert.equal("ㅟ", d.change)
         Assert.equal(-1, d.n)
@@ -281,6 +281,17 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("으", system.text)
     }
 
+    func test갈마들이() {
+        let gal = 갈마들이(모음("ㅡ"), 종성("ㅋ"))
+        var cnt = 0
+        if case let .갈(lhs, rhs) = gal.type {
+            Assert.equal(모음("ㅡ"), lhs)
+            Assert.equal(종성("ㅋ"), rhs)
+            cnt += 1
+        }
+        Assert.equal(1, cnt)
+    }
+    
     func test토크() {
         let system = HangulInputSystem()
         var d: AutomataDiff
@@ -290,6 +301,7 @@ class HangulGalmadlyTests: WTestCase {
         Assert.equal("토", system.text)
         d = system.input(초성("ㅋ"))
         Assert.equal("토ㅋ", system.text)
+        
         d = system.input(갈마들이(모음("ㅡ"), 종성("ㅋ")))
         Assert.equal("토크", system.text)
         Assert.equal("크", d.change)
@@ -398,7 +410,7 @@ class HangulGalmadlyTests: WTestCase {
         var d: AutomataDiff
         
         d = system.input(종성("ㅇ"))
-        Assert.equal("ᅠᆼ", system.text)
+        Assert.equal("ᅟᅠᆼ", system.text)
         Assert.equal(0, d.n)
         
         d = system.input(초성("ㅊ"))
