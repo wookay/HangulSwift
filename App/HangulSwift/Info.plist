@@ -44,8 +44,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIAppFonts</key>
-	<array>
-		<string>NanumMyeongjo-YetHangul.ttf</string>
-	</array>
+	<array/>
 </dict>
 </plist>

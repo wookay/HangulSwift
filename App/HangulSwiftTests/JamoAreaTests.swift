@@ -33,7 +33,6 @@ func load_doensori(area: JamoArea) {
 }
 
 class JamoAreaTests: WHangulTestCase {
-//    let a = JamoArea()
     
     func setup() {
         load_doensori(a)
@@ -81,6 +80,11 @@ class JamoAreaTests: WHangulTestCase {
         syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1100}"), 중: 옛중("\u{1161}"), 종: 옛종("\u{11BC}")), 방점: nil)
         Assert.equal("강", a.compose(syl))
     }
+    
+    func test_방점() {
+        Assert.equal(["\u{115F}", "\u{302E}"], 거성마크.scalars)
+        Assert.equal(["\u{115F}", "\u{302F}"], 상성마크.scalars)
+    }
 
     func test_decompose_hangul() {
         let 랏a: YetHanChar = a.decompose_hangul("랏")
@@ -103,8 +107,8 @@ class JamoAreaTests: WHangulTestCase {
         
         Assert.equal(["\u{115F}", "\u{302E}"], 거성마크.scalars)
         
-        Assert.equal("·", a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .거성)))
-        Assert.equal(":", a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .상성)))
+        Assert.equal("​〮", a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .거성)))
+        Assert.equal("​〯", a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .상성)))
         
         syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1105}"), 중: 옛중("\u{1161}"), 종: 옛종("\u{11BA}")), 방점: nil)
         Assert.equal(["\u{B78F}"], a.compose(syl).scalars)
@@ -113,18 +117,20 @@ class JamoAreaTests: WHangulTestCase {
         Assert.equal(["\u{B78F}"], a.compose(syl).scalars)
         
         syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1105}"), 중: 옛중("\u{1161}"), 종: 옛종("\u{11BA}")), 방점: .거성)
-        Assert.equal(["\u{1105}", "\u{1161}", "\u{11BA}", "\u{302E}"], a.compose(syl).scalars)
+        Assert.equal([방점전공백, "\u{302E}", "\u{1105}", "\u{1161}", "\u{11BA}"], a.compose(syl).scalars)
         
         syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1106}"), 중: 옛중("\u{1161}"), 종: 옛종("\u{11AF}")), 방점: .상성)
-        Assert.equal(["\u{1106}", "\u{1161}", "\u{11AF}", "\u{302F}"], a.compose(syl).scalars)
+        Assert.equal([방점전공백, "\u{302F}", "\u{1106}", "\u{1161}", "\u{11AF}"], a.compose(syl).scalars)
     }
 
     func test_applicable() {
+        load_doensori(a)
         Assert.equal("\u{1101}", a.applicable(초성("ㄱ"), jamo: 초성("ㄱ")))
         Assert.equal("\u{112D}", a.applicable(초성("ㅅ"), jamo: 초성("ㄱ")))
     }
     
     func test_deapplicable() {
+        load_doensori(a)
         Assert.equal("\u{1100}", a.deapplicable(초성("ㄲ"), jamo: 초성("ㄱ")))
         Assert.equal(nil, a.deapplicable(옛초("\u{112D}"), jamo: 초성("ㅅ")))
         Assert.equal("\u{1109}", a.deapplicable(옛초("\u{112D}"), jamo: 초성("ㄱ")))

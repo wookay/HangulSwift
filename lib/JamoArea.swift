@@ -99,9 +99,6 @@ extension YetJamoSet: CustomStringConvertible {
 
 
 // MARK: Bangjeom
-let 거성마크 = "ᅟ〮"  // 115F 302E
-let 상성마크 = "ᅟ〯"  // 115F 302F
-
 public enum Bangjeom: UnicodeScalar, CustomStringConvertible {
     case 거성 = "\u{302E}" // One dot
     case 상성 = "\u{302F}" // Two dots
@@ -145,12 +142,25 @@ let 중성표 = "ㅏ ㅐ ㅑ ㅒ ㅓ ㅔ ㅕ ㅖ ㅗ ㅘ ㅙ ㅚ ㅛ ㅜ ㅝ ㅞ
 let 종성표 = [""] + "ㄱ ㄲ ㄳ ㄴ ㄵ ㄶ ㄷ ㄹ ㄺ ㄻ ㄼ ㄽ ㄾ ㄿ ㅀ ㅁ ㅂ ㅄ ㅅ ㅆ ㅇ ㅈ ㅊ ㅋ ㅌ ㅍ ㅎ".componentsSeparatedByString(" ")
 let lower종성표: [UnicodeScalar] = [빈종성, "\u{11A8}", "\u{11A9}", "\u{11AA}", "\u{11AB}", "\u{11AC}", "\u{11AD}", "\u{11AE}", "\u{11AF}", "\u{11B0}", "\u{11B1}", "\u{11B2}", "\u{11B3}", "\u{11B4}", "\u{11B5}", "\u{11B6}", "\u{11B7}", "\u{11B8}", "\u{11B9}", "\u{11BA}", "\u{11BB}", "\u{11BC}", "\u{11BD}", "\u{11BE}", "\u{11BF}", "\u{11C0}", "\u{11C1}", "\u{11C2}"]
 
-let 초성채움 = "\u{115F}"
-let 중성채움 = "\u{1160}"
 let 초성영역 = 0x1100
 let 중성영역 = 0x1161
-let 빈스칼라: UnicodeScalar = "\u{0}"
+let 초성채움: UnicodeScalar = "\u{115F}"
+let 중성채움: UnicodeScalar = "\u{1160}"
 
+let 빈한글 = ""
+let 빈스칼라: UnicodeScalar = "\u{0}"
+let 빈초성: UnicodeScalar = "\u{115F}"
+let 빈중성: UnicodeScalar = "\u{1160}"
+let 빈종성: UnicodeScalar = "\u{0000}"
+
+let 빈초 = YetJamo(type: .초, scalar: 빈초성)
+let 빈중 = YetJamo(type: .중, scalar: 빈중성)
+let 빈종 = YetJamo(type: .종, scalar: 빈종성)
+let 빈자모셑 = YetJamoSet(초: 빈초, 중: 빈중, 종: 빈종)
+
+let 방점전공백: UnicodeScalar = "\u{200B}"
+let 거성마크 = "ᅟ〮"  // · 00B7   // 302E ᅟ〮
+let 상성마크 = "ᅟ〯"  // : 003A   // 302F ᅟ〯
 
 public enum SpecialKeyType: Int32 {
     case BACKSPACE = 8
@@ -167,18 +177,6 @@ public struct AutomataDiff {
     public var n: Int
     public var change: String
 }
-
-
-
-let 빈한글 = "\u{3164}"
-let 빈초성 = UnicodeScalar("\u{115F}")
-let 빈중성 = UnicodeScalar("\u{1160}")
-let 빈종성 = UnicodeScalar("\u{0000}")
-
-let 빈초 = YetJamo(type: .초, scalar: 빈초성)
-let 빈중 = YetJamo(type: .중, scalar: 빈중성)
-let 빈종 = YetJamo(type: .종, scalar: 빈종성)
-let 빈자모셑 = YetJamoSet(초: 빈초, 중: 빈중, 종: 빈종)
 
 extension String {
     var scalars: [UnicodeScalar] {
@@ -199,6 +197,10 @@ func isEmpty(yet: YetJamo) -> Bool {
     default:
         return false
     }
+}
+
+func isEmpty(set: YetJamoSet) -> Bool {
+    return isEmpty(set.초) && isEmpty(set.중) && isEmpty(set.종)
 }
 
 func 옛초(scalar: UnicodeScalar) -> YetJamo {
@@ -251,24 +253,15 @@ class JamoArea {
     // MARK: 방점
     func scalar_to_bangjeom(scalar: UnicodeScalar) -> Bangjeom? {
         switch scalar {
-        case "\u{302E}":
+        case Bangjeom.거성.rawValue:
             return .거성
-        case "\u{302F}":
+        case Bangjeom.상성.rawValue:
             return .상성
         default:
             return nil
         }
     }
-    
-    func bangjeom_to_compatibility(방점 type: Bangjeom) -> String {
-        switch type {
-        case .거성:
-            return "·"
-        case .상성:
-            return ":"
-        }
-    }
-    
+
     func jamo_to_sound(jamo: YetJamo) -> String {
         if let compat = scalar_to_compatibility(jamo.type, scalar: jamo.scalar) {
             return compat
@@ -363,67 +356,78 @@ class JamoArea {
             return compose_jamoset(set, bangjeom)
         }
     }
+
+    func bangjeoming(초성: YetJamo, _ 중성: YetJamo, _ 종성: YetJamo, _ bangjeom: Bangjeom?, _ scalars: [UnicodeScalar]) -> String {
+        let cha: String = scalars.map{ x in String(x) }.reduce("", combine: +)
+        if let bang = bangjeom {
+            return String(방점전공백) + String(bang.rawValue) + cha
+        } else {
+            return cha
+        }
+    }
+    
+    func compatable(초성: YetJamo, _ 중성: YetJamo, _ 종성: YetJamo) -> String? {
+        switch (초성.scalar, 중성.scalar, 종성.scalar) {
+        case (빈초성, 빈중성, 빈종성):
+            return ""
+        case (초성.scalar, 빈중성, 빈종성):
+            if let compat = scalar_to_compatibility(.초, scalar: 초성.scalar) {
+                return compat
+            }
+        case (빈초성, 중성.scalar, 빈종성):
+            if let compat = scalar_to_compatibility(.중, scalar: 중성.scalar) {
+                return compat
+            }
+        case (빈초성, 빈중성, 종성.scalar):
+            break
+        case (빈초성, 중성.scalar, 종성.scalar):
+            break
+        case (초성.scalar, 빈중성, 종성.scalar):
+            break
+        case (초성.scalar, 중성.scalar, 빈종성):
+            if let _ = compact(.초, scalar: 초성.scalar),
+                let _ = compact(.중, scalar: 중성.scalar) {
+                let 초값 = Int(초성.scalar.value - UInt32(초성영역))
+                let 중값 = Int(중성.scalar.value - UInt32(중성영역))
+                return String(UnicodeScalar(유니코드_가 + 초성오프셋 * 초값 + 중성오프셋 * 중값))
+            }
+        default:
+            if let _ = compact(.초, scalar: 초성.scalar),
+                let _ = compact(.중, scalar: 중성.scalar),
+                let 종값 = lower종성표.indexOf(종성.scalar) {
+                let 초값 = Int(초성.scalar.value - UInt32(초성영역))
+                let 중값 = Int(중성.scalar.value - UInt32(중성영역))
+                return String(UnicodeScalar(유니코드_가 + 초성오프셋 * 초값 + 중성오프셋 * 중값 + 종값))
+            }
+        }
+        return nil
+    }
     
     func compose_jamoset(set: YetJamoSet, _ bangjeom: Bangjeom?) -> String {
         let (초성, 중성, 종성) = (set.초, set.중, set.종)
         if nil == bangjeom {
-            switch (초성.scalar, 중성.scalar, 종성.scalar) {
-            case (빈초성, 빈중성, 빈종성):
-                return ""
-            case (초성.scalar, 빈중성, 빈종성):
-                if let compat = scalar_to_compatibility(.초, scalar: 초성.scalar) {
-                    return compat
-                }
-            case (빈초성, 중성.scalar, 빈종성):
-                if let compat = scalar_to_compatibility(.중, scalar: 중성.scalar) {
-                    return compat
-                }
-            case (빈초성, 빈중성, 종성.scalar):
-                break
-            case (빈초성, 중성.scalar, 종성.scalar):
-                break
-            case (초성.scalar, 빈중성, 종성.scalar):
-                break
-            case (초성.scalar, 중성.scalar, 빈종성):
-                if let _ = compact(.초, scalar: 초성.scalar),
-                    let _ = compact(.중, scalar: 중성.scalar) {
-                    let 초값 = Int(초성.scalar.value - UInt32(초성영역))
-                    let 중값 = Int(중성.scalar.value - UInt32(중성영역))
-                    return String(UnicodeScalar(유니코드_가 + 초성오프셋 * 초값 + 중성오프셋 * 중값))
-                }
-            default:
-                if let _ = compact(.초, scalar: 초성.scalar),
-                    let _ = compact(.중, scalar: 중성.scalar),
-                    let 종값 = lower종성표.indexOf(종성.scalar) {
-                    let 초값 = Int(초성.scalar.value - UInt32(초성영역))
-                    let 중값 = Int(중성.scalar.value - UInt32(중성영역))
-                    return String(UnicodeScalar(유니코드_가 + 초성오프셋 * 초값 + 중성오프셋 * 중값 + 종값))
-                }
+            if let compat = compatable(초성, 중성, 종성) {
+                return compat
             }
         }
         
-        let bang = (nil == bangjeom) ? "" : String(bangjeom!.rawValue)
         switch (초성.scalar, 중성.scalar, 종성.scalar) {
         case (빈초성, 빈중성, 빈종성):
-            if let jeom = bangjeom {
-                return bangjeom_to_compatibility(방점: jeom)
-            } else {
-                return ""
-            }
+            return bangjeoming(초성, 중성, 종성, bangjeom, [])
         case (초성.scalar, 빈중성, 빈종성):
-            return String(초성.scalar) + 중성채움 + bang
+            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성채움])
         case (빈초성, 중성.scalar, 빈종성):
-            return 초성채움 + String(중성.scalar) + bang
+            return bangjeoming(초성, 중성, 종성, bangjeom, [초성채움, 중성.scalar])
         case (빈초성, 빈중성, 종성.scalar):
-            return 초성채움 + 중성채움 + String(종성.scalar) + bang
+            return bangjeoming(초성, 중성, 종성, bangjeom, [초성채움, 중성채움, 종성.scalar])
         case (빈초성, 중성.scalar, 종성.scalar):
-            return 초성채움 + String(중성.scalar) + String(종성.scalar) + bang
+            return bangjeoming(초성, 중성, 종성, bangjeom, [초성채움, 중성.scalar, 종성.scalar])
         case (초성.scalar, 빈중성, 종성.scalar):
-            return String(초성.scalar) + 중성채움 + String(종성.scalar) + bang
+            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성채움, 종성.scalar])
         case (초성.scalar, 중성.scalar, 빈종성):
-            return String(초성.scalar) + String(중성.scalar) + bang
+            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성.scalar])
         default:
-            return String(초성.scalar) + String(중성.scalar) + String(종성.scalar) + bang
+            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성.scalar, 종성.scalar])
         }
     }
     

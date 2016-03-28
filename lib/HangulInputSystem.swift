@@ -20,8 +20,8 @@ public class HangulInputSystem {
     var hangul: YetJamoSet = 빈자모셑
     var prevjamo: YetJamo? = nil
     var bangjeom: Bangjeom? = nil
-    
     var last_backspace: Bool = false
+    
     public var pressed: ((YetJamo)->Void)? = nil
     
     func debug(s: String = "") {
@@ -36,6 +36,14 @@ public class HangulInputSystem {
     public init() {
     }
 
+    public func clear() {
+        syllables = []
+        hangul = 빈자모셑
+        prevjamo = nil
+        bangjeom = nil
+        last_backspace = false
+    }
+    
     func append_syllable(set: YetJamoSet) -> Int {
         let cha = area.compose(YetHanChar.yethangul(set: set, 방점: bangjeom))
         syllables.append(cha)
@@ -184,14 +192,9 @@ public class HangulInputSystem {
     
     func backspace_remove() -> AutomataDiff {
         if let _ = bangjeom {
-//            let old = area.compose(.yethangul(set: hangul, 방점: bangjeom))
             bangjeom = nil
             let newer = area.compose(.yethangul(set: hangul, 방점: bangjeom))
-//            if old != newer {
-//                let change = newer
-//                return AutomataDiff(n: -old.characters.count, change: change)
-//            }
-            return AutomataDiff(n: -1, change: newer)
+            return AutomataDiff(n: -2, change: newer)
         }
         var diff = AutomataDiff(n: 0, change: "")
         if last_backspace {
@@ -256,30 +259,91 @@ public class HangulInputSystem {
     }
     
     public func automata_diff(bang: Bangjeom) -> AutomataDiff {
-        let old = area.compose(.yethangul(set: hangul, 방점: bangjeom))
-        var was상성 = false
-        if let jeom = bangjeom {
-            was상성 = jeom == .상성
+        if let prev = prevjamo {
+            switch prev.type {
+            case .Normal:
+                return AutomataDiff(n: 0, change: "")
+            default:
+                break
+            }
         }
-        if bang == .거성 && was상성 {
-            bangjeom = nil
+        if isEmpty(hangul) {
+//            if let _ = bangjeom {
+//                bangjeom = bang
+//                let newer = area.compose(.yethangul(set: hangul, 방점: bangjeom))
+//                return AutomataDiff(n: -1, change: newer)
+//            } else {
+//                bangjeom = bang
+//                let change = area.compose(.yethangul(set: hangul, 방점: bangjeom))
+                return AutomataDiff(n: 0, change: "")
+//            }
         } else {
-            bangjeom = bang
-        }
-        let newer = area.compose(.yethangul(set: hangul, 방점: bangjeom))
-        if old == newer {
-            return AutomataDiff(n: 0, change: "")
-        } else {
-            let change = newer
-            return AutomataDiff(n: -old.characters.count, change: change)
+            if let _ = bangjeom {
+                append_syllable(hangul)
+                hangul = 빈자모셑
+                bangjeom = bang
+                let newer = area.compose(.yethangul(set: hangul, 방점: bangjeom))
+                return AutomataDiff(n: 0, change: newer)
+            } else {
+                bangjeom = bang
+                let change = area.compose(.yethangul(set: hangul, 방점: bangjeom))
+                return AutomataDiff(n: -1, change: change)
+            }
         }
     }
     
-    public func automata_diff(jam: YetJamo) -> AutomataDiff {
+    internal func automata_diff_impl(jamo: YetJamo) -> AutomataDiff {
         var diff = AutomataDiff(n: 0, change: "")
-        if case .Special(.BACKSPACE) = jam.type {
-            diff = backspace_remove()
+        last_backspace = false
+        var set = hangul
+        let cha = area.compose(.yethangul(set: set, 방점: bangjeom))
+        if cha.isEmpty {
+            diff.n += 1
         } else {
+            if cha.containsUnicode52 {
+                diff.n += 1
+                diff.n -= cha.unicodeScalars.count
+            }
+        }
+        
+        var n = 0
+        switch jamo.type {
+        case .초, .중, .모, .종:
+            let cnt = syllables.count
+            (set, n) = apply_compose(set, jamo: jamo)
+            if syllables.count > cnt {
+                if cha.containsUnicode52 {
+                    diff.n = 0
+                }
+            }
+            diff.n += n
+        case let .갈(lhs, rhs):
+            (set, n) = galma(set, lhs, rhs)
+            diff.n += n
+        case let .Normal(string):
+            prevjamo = jamo
+            diff.n -= 1
+            if !area.compose(.yethangul(set: hangul, 방점: bangjeom)).isEmpty {
+                diff.n += append_syllable(hangul)
+            }
+            append_syllable(string)
+            hangul = 빈자모셑
+            diff.change += string
+        default:
+            break
+        }
+        diff.change += area.compose(.yethangul(set: hangul, 방점: bangjeom))
+        return diff
+    }
+    
+    public func automata_diff(jam: YetJamo) -> AutomataDiff {
+        if case .Special(.BACKSPACE) = jam.type {
+            return backspace_remove()
+        } else {
+            if let _ = bangjeom {
+                append_syllable(hangul)
+                hangul = 빈자모셑
+            }
             var jamo: YetJamo = jam
             switch jam.type {
             case .모:
@@ -295,48 +359,8 @@ public class HangulInputSystem {
             default:
                 break
             }
-            
-            last_backspace = false
-            var set = hangul
-            let cha = area.compose(.yethangul(set: set, 방점: bangjeom))
-            if cha.isEmpty {
-                diff.n += 1
-            } else {
-                if cha.containsUnicode52 {
-                    diff.n += 1
-                    diff.n -= cha.unicodeScalars.count
-                }
-            }
-            
-            var n = 0
-            switch jamo.type {
-            case .초, .중, .모, .종:
-                let cnt = syllables.count
-                (set, n) = apply_compose(set, jamo: jamo)
-                if syllables.count > cnt {
-                    if cha.containsUnicode52 {
-                        diff.n = 0
-                    }
-                }
-                diff.n += n
-            case let .갈(lhs, rhs):
-                (set, n) = galma(set, lhs, rhs)
-                diff.n += n
-            case let .Normal(string):
-                prevjamo = jamo
-                diff.n -= 1
-                if !area.compose(.yethangul(set: hangul, 방점: bangjeom)).isEmpty {
-                    diff.n += append_syllable(hangul)
-                }
-                append_syllable(string)
-                hangul = 빈자모셑
-                diff.change += string
-            default:
-                break
-            }
-            diff.change += area.compose(.yethangul(set: hangul, 방점: bangjeom))
+            return automata_diff_impl(jamo)
         }
-        return diff
     }
     
     public func input(key: SpecialKeyType) -> AutomataDiff {
@@ -371,7 +395,7 @@ extension String {
             self.unicodeScalars.contains { scalar in
             [
                 (0x115A...0x115E),
-                //                (0x11A3...0x11A7),
+                // (0x11A3...0x11A7),
                 (0x11FA...0x11FF),
                 (0xA960...0xA97C),
                 (0xD7B0...0xD7FB),
