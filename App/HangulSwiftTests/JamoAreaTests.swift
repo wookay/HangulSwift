@@ -101,14 +101,15 @@ class JamoAreaTests: WHangulTestCase {
     func test_compose_방점() {
         var syl: YetHanChar
         
-        
         Assert.equal(["\u{00B7}"], "·".unicodeScalars.map { x in x})
-        Assert.equal([":"], ":".unicodeScalars.map { x in x})
+        Assert.equal(["\u{003A}"], ":".unicodeScalars.map { x in x})
         
         Assert.equal(["\u{115F}", "\u{302E}"], 거성마크.scalars)
         
-        Assert.equal("​〮", a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .거성)))
-        Assert.equal("​〯", a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .상성)))
+        Assert.equal(["\u{302E}"], a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .거성), spacing: false).scalars)
+        Assert.equal(["\u{302F}"], a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .상성), spacing: false).scalars)
+        Assert.equal(["\u{302E}", 방점후공백], a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .거성)).scalars)
+        Assert.equal(["\u{302F}", 방점후공백], a.compose(YetHanChar.yethangul(set: 빈자모셑, 방점: .상성)).scalars)
         
         syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1105}"), 중: 옛중("\u{1161}"), 종: 옛종("\u{11BA}")), 방점: nil)
         Assert.equal(["\u{B78F}"], a.compose(syl).scalars)
@@ -117,10 +118,10 @@ class JamoAreaTests: WHangulTestCase {
         Assert.equal(["\u{B78F}"], a.compose(syl).scalars)
         
         syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1105}"), 중: 옛중("\u{1161}"), 종: 옛종("\u{11BA}")), 방점: .거성)
-        Assert.equal([방점전공백, "\u{302E}", "\u{1105}", "\u{1161}", "\u{11BA}"], a.compose(syl).scalars)
+        Assert.equal(["\u{1105}", "\u{1161}", "\u{11BA}", "\u{302E}", 방점후공백], a.compose(syl).scalars)
         
         syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1106}"), 중: 옛중("\u{1161}"), 종: 옛종("\u{11AF}")), 방점: .상성)
-        Assert.equal([방점전공백, "\u{302F}", "\u{1106}", "\u{1161}", "\u{11AF}"], a.compose(syl).scalars)
+        Assert.equal(["\u{1106}", "\u{1161}", "\u{11AF}", "\u{302F}", 방점후공백], a.compose(syl).scalars)
     }
 
     func test_applicable() {

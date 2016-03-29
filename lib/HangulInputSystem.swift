@@ -45,14 +45,13 @@ public class HangulInputSystem {
     }
     
     func append_syllable(set: YetJamoSet) -> Int {
-        let cha = area.compose(YetHanChar.yethangul(set: set, 방점: bangjeom))
+        let cha = area.compose(YetHanChar.yethangul(set: set, 방점: bangjeom), spacing: false)
         syllables.append(cha)
         if let _ = bangjeom {
             bangjeom = nil
         }
         return 1
     }
-
     
     func append_syllable(normal: String) -> Int {
         let cha = area.compose(.normal(value: normal))
@@ -198,8 +197,7 @@ public class HangulInputSystem {
         }
         var diff = AutomataDiff(n: 0, change: "")
         if last_backspace {
-            let cha = area.compose(.yethangul(set: hangul, 방점: bangjeom))
-            if cha.isEmpty {
+            if hangul == 빈자모셑 {
                 if syllables.count > 0 {
                     syllables.removeLast()
                 }

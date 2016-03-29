@@ -158,7 +158,7 @@ let 빈중 = YetJamo(type: .중, scalar: 빈중성)
 let 빈종 = YetJamo(type: .종, scalar: 빈종성)
 let 빈자모셑 = YetJamoSet(초: 빈초, 중: 빈중, 종: 빈종)
 
-let 방점전공백: UnicodeScalar = "\u{200B}"
+let 방점후공백: UnicodeScalar = "\u{200B}"
 let 거성마크 = "ᅟ〮"  // · 00B7   // 302E ᅟ〮
 let 상성마크 = "ᅟ〯"  // : 003A   // 302F ᅟ〯
 
@@ -348,19 +348,19 @@ class JamoArea {
         }
     }
     
-    func compose(syllable: YetHanChar) -> String {
+    func compose(syllable: YetHanChar, spacing: Bool = true) -> String {
         switch syllable {
         case let .normal(value) :
             return value
         case let .yethangul(set, bangjeom):
-            return compose_jamoset(set, bangjeom)
+            return compose_jamoset(set, bangjeom, spacing: spacing)
         }
     }
 
-    func bangjeoming(초성: YetJamo, _ 중성: YetJamo, _ 종성: YetJamo, _ bangjeom: Bangjeom?, _ scalars: [UnicodeScalar]) -> String {
+    func bangjeoming(초성: YetJamo, _ 중성: YetJamo, _ 종성: YetJamo, _ bangjeom: Bangjeom?, _ spacing: Bool, _ scalars: [UnicodeScalar]) -> String {
         let cha: String = scalars.map{ x in String(x) }.reduce("", combine: +)
         if let bang = bangjeom {
-            return String(방점전공백) + String(bang.rawValue) + cha
+            return cha + String(bang.rawValue) + (spacing ? String(방점후공백) : "")
         } else {
             return cha
         }
@@ -403,7 +403,7 @@ class JamoArea {
         return nil
     }
     
-    func compose_jamoset(set: YetJamoSet, _ bangjeom: Bangjeom?) -> String {
+    func compose_jamoset(set: YetJamoSet, _ bangjeom: Bangjeom?, spacing: Bool) -> String {
         let (초성, 중성, 종성) = (set.초, set.중, set.종)
         if nil == bangjeom {
             if let compat = compatable(초성, 중성, 종성) {
@@ -413,21 +413,21 @@ class JamoArea {
         
         switch (초성.scalar, 중성.scalar, 종성.scalar) {
         case (빈초성, 빈중성, 빈종성):
-            return bangjeoming(초성, 중성, 종성, bangjeom, [])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [])
         case (초성.scalar, 빈중성, 빈종성):
-            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성채움])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [초성.scalar, 중성채움])
         case (빈초성, 중성.scalar, 빈종성):
-            return bangjeoming(초성, 중성, 종성, bangjeom, [초성채움, 중성.scalar])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [초성채움, 중성.scalar])
         case (빈초성, 빈중성, 종성.scalar):
-            return bangjeoming(초성, 중성, 종성, bangjeom, [초성채움, 중성채움, 종성.scalar])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [초성채움, 중성채움, 종성.scalar])
         case (빈초성, 중성.scalar, 종성.scalar):
-            return bangjeoming(초성, 중성, 종성, bangjeom, [초성채움, 중성.scalar, 종성.scalar])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [초성채움, 중성.scalar, 종성.scalar])
         case (초성.scalar, 빈중성, 종성.scalar):
-            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성채움, 종성.scalar])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [초성.scalar, 중성채움, 종성.scalar])
         case (초성.scalar, 중성.scalar, 빈종성):
-            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성.scalar])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [초성.scalar, 중성.scalar])
         default:
-            return bangjeoming(초성, 중성, 종성, bangjeom, [초성.scalar, 중성.scalar, 종성.scalar])
+            return bangjeoming(초성, 중성, 종성, bangjeom, spacing, [초성.scalar, 중성.scalar, 종성.scalar])
         }
     }
     
