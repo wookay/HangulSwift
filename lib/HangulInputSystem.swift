@@ -24,10 +24,6 @@ public class HangulInputSystem {
     
     public var pressed: ((YetJamo)->Void)? = nil
     
-    func debug(s: String = "") {
-        Log.info("hangul\(s)", hangul, "prevjamo", prevjamo, "last_backspace", last_backspace, "syllables", syllables)
-    }
-
     var text: String {
         let str = syllables.joinWithSeparator("")
         return str + area.compose(YetHanChar.yethangul(set: hangul, 방점: bangjeom))

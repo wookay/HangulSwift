@@ -19,3 +19,10 @@ class WHangulTestCase: WTestCase {
         return YetJamo(type: .Normal(string: sound), scalar: 빈스칼라)
     }
 }
+
+
+extension HangulInputSystem {
+    func debug(s: String = "") {
+        Log.info("hangul\(s)", hangul, "prevjamo", prevjamo, "last_backspace", last_backspace, "syllables", syllables)
+    }
+}

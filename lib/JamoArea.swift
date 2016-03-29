@@ -243,8 +243,6 @@ class JamoArea {
                 if !custom {
                     dejohab_dict[a + String(yb) + String(yd)] = yc
                 }
-            } else {
-                Log.info("else", a, b, c, d)
             }
         }
     }
