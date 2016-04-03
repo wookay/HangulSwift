@@ -136,5 +136,12 @@ class JamoAreaTests: WHangulTestCase {
         Assert.equal(nil, a.deapplicable(옛초("\u{112D}"), jamo: 초성("ㅅ")))
         Assert.equal("\u{1109}", a.deapplicable(옛초("\u{112D}"), jamo: 초성("ㄱ")))
     }
+    
+    func test_compose_halfwidth() {
+        var syl: YetHanChar
+        syl = YetHanChar.yethangul(set: YetJamoSet(초: 옛초("\u{1105}"), 중: 옛중("\u{318E}"), 종: 옛종("\u{11BA}")), 방점: nil)
+        Assert.equal(["\u{1105}", "\u{318E}", "\u{11BA}"], a.compose(syl).scalars)
+   
+    }
 
 }

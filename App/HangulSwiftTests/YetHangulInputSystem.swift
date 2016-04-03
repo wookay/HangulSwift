@@ -215,10 +215,10 @@ class YetHangulInputSystem: WHangulTestCase {
         var d: AutomataDiff
         
         d = system.input(초성("ㅂ"))
-        d = system.input(중성("ㆎ"))
+        d = system.input(옛중("ㆎ"))
         d = system.input(종성("ㄹ"))
         
-        Assert.equal("ᄇᆡᆯ", system.text)
+        Assert.equal("ᄇㆎᆯ", system.text)
         Assert.equal(-1, d.n)
     }
     
