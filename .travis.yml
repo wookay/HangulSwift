@@ -1,6 +1,8 @@
 language: objective-c
 osx_image: xcode7.3
 xcode_sdk: iphonesimulator
+before_install:  # to fix xctool issue since Xcode 7.3
+  - brew uninstall xctool && brew install --HEAD xctool
 script:
   - make
 notifications:
