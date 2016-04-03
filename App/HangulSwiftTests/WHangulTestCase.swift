@@ -1,3 +1,5 @@
+//import XCTest
+
 class WHangulTestCase: WTestCase {
     let a = JamoArea()
     func 초성(sound: String) -> YetJamo {

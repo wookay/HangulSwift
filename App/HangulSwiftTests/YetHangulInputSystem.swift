@@ -210,7 +210,7 @@ class YetHangulInputSystem: WHangulTestCase {
         Assert.equal(-1, d.n)
     }
 
-    func test_ᄇᆡᆯ() {
+    func test_ᄇㆎᆯ() {
         let system = HangulInputSystem()
         var d: AutomataDiff
         

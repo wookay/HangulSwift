@@ -7,9 +7,8 @@
 //
 
 import Foundation
-//import XCTest
 
-class KeyMapperTests: WTestCase {
+class KeyMapperTests: WHangulTestCase {
     
     func test390() {
         let path = [NSBundle.mainBundle().resourcePath!, "390-Sebulsik.txt"].joinWithSeparator("/")

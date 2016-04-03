@@ -6,8 +6,6 @@
 //  Copyright © 2016 factorcat. All rights reserved.
 //
 
-//import XCTest
-
 class HangulGalmadlyTests: WHangulTestCase {
 
     func test더() {
